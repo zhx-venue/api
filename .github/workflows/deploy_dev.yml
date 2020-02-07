@@ -19,14 +19,9 @@ jobs: # jobs一般都是并行执行
       - name: Deploy to Web Server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.SSH_HOST }}
-          username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE }}
+          host: 129.204.250.214
+          username: root
+          key: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC3ZXEVmGLhbXWK5TqFosxcALs7AX9zXqFeN/t82TwWMW7SKJlaO0MT6wxT0rZjf3WqUSV8FELbfmI1fyMYQ61shC26clagS9+t2mfvrK2xUG+mbeL4JLFexyiVypDEkBysASoLfjPhPBZnChggrj1sFpyaVmHCX3ny0qeMU+Iy+KbEyPsHeP9A9nhcqQKvm05UZymu7VEj5NLDQWgxch5En4AeDO1MYXcu1S6IyS5jTv8jP18KoCNCNPppL+9mia4kdaATLOx9LR6Rq3LZEQZU7HTSt1KIEjopQpIwjg2n0m0+MZnrmyNwmXiCN+kW1uh78uGoBpPSTJbEyljS/GwJ root@VM_16_5_centos
           script: |
-            echo ${{ secrets.SSH_HOST }}
-            echo ${{ secrets.SSH_USER }}
-            echo ${{ secrets.SSH_PRIVATE }}
-            echo ${{ secrets.SERVER_PATH }}
-            echo ${{ secrets.ROOTDIR }}
-            cd ${{ secrets.SERVER_PATH }} && git pull
+            cd /www/wwwroot/api.venue.eduinspector.com && git pull
             composer install --prefer-dist --no-progress --no-suggest
