@@ -21,7 +21,8 @@ jobs: # jobs一般都是并行执行
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
-          key: ${{ secrets.SSH_PRIVATE }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          #key: ${{ secrets.SSH_PRIVATE }}
           script: |
             echo ${{ secrets.SSH_HOST }} >> /tmp/ssss.txt
             echo ${{ secrets.SSH_USER }} >> /tmp/ssss.txt
