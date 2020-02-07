@@ -23,5 +23,10 @@ jobs: # jobs一般都是并行执行
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE }}
           script: |
-            cd ${{ secrets.ROOTDIR }} && git pull
+            echo ${{ secrets.SSH_HOST }}
+            echo ${{ secrets.SSH_USER }}
+            echo ${{ secrets.SSH_PRIVATE }}
+            echo ${{ secrets.SERVER_PATH }}
+            echo ${{ secrets.ROOTDIR }}
+            cd ${{ secrets.SERVER_PATH }} && git pull
             composer install --prefer-dist --no-progress --no-suggest
