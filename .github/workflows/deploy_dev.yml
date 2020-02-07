@@ -13,7 +13,7 @@ jobs: # jobs一般都是并行执行
 
     steps:
       # 使用 actions/checkout 这个插件 用于拉取当前仓库的dev分支
-      - uses: actions/checkout@dev 
+      - uses: actions/checkout@v2 
       
       # 部署到应用服务器
       - name: Deploy to Web Server
