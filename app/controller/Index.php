@@ -15,7 +15,7 @@ use shophy\wxwork\structs\Agent;
 use app\miniprogram\Api as MiniApi;
 use think\exception\ValidateException;
 
-class Index extends BaseController
+class index extends BaseController
 {
     // 初始化
     protected function initialize()
