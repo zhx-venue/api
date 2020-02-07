@@ -12,16 +12,8 @@ jobs: # jobs一般都是并行执行
     runs-on: ubuntu-latest # 运行环境
 
     steps:
-      # 使用 actions/checkout 这个插件 用于拉取当前仓库的master分支
+      # 使用 actions/checkout 这个插件 用于拉取当前仓库的dev分支
       - uses: actions/checkout@dev 
-
-      # composer 校验
-      - name: Validate composer.json and composer.lock
-        run: composer validate
-
-      # composer 更新
-      - name: Install dependencies
-        run: composer install --prefer-dist --no-progress --no-suggest
       
       # 部署到应用服务器
       - name: Deploy to Web Server
@@ -32,3 +24,4 @@ jobs: # jobs一般都是并行执行
           key: ${{ secrets.SSH_PRIVATE }}
           script: |
             cd ${{ secrets.SERVER_PATH }} && git pull
+            composer install --prefer-dist --no-progress --no-suggest
