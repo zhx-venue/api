@@ -24,9 +24,5 @@ jobs: # jobs一般都是并行执行
           password: ${{ secrets.SSH_PASSWORD }}
           #key: ${{ secrets.SSH_PRIVATE }}
           script: |
-            echo ${{ secrets.SSH_HOST }} >> /tmp/ssss.txt
-            echo ${{ secrets.SSH_USER }} >> /tmp/ssss.txt
-            echo ${{ secrets.SSH_PRIVATE }} >> /tmp/ssss.txt
-            echo ${{ secrets.SERVER_PATH }} >> /tmp/ssss.txt
             cd ${{ secrets.SERVER_PATH }} && git pull
             composer install --prefer-dist --no-progress --no-suggest
