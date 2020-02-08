@@ -50,7 +50,6 @@ class index extends BaseController
         // VenueRole::clear(0);
         // VenueMember::clear(0);
 
-
         // try {
         //     $result = validate(valVenueMember::class)->batch(true)->check(
         //         ['name'  => 'thinkphp', 'email' => 'thinkphp@qq.com']
