@@ -27,7 +27,7 @@ class Provider extends BaseController
      * usertype    1.创建者 2.内部系统管理员 3.外部系统管理员 4.分级管理员 5.成员
      */
     //服务商后台登录入口
-    public function actionLoginInfo()
+    public function loginInfo()
     {
         $authCode = input('get.auth_code');
         if(empty($authCode))    return;

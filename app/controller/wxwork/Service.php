@@ -23,7 +23,7 @@ class Service extends BaseController
     /**
      * 安装酷柠教育应用
      */
-    public function actionInstall()
+    public function install()
     {
         set_time_limit(0);
         ignore_user_abort(true);
@@ -80,7 +80,7 @@ class Service extends BaseController
     /**
      * 应用 指令回调事件处理
      */
-    public function actionHandle()
+    public function handle()
     {
         $sReqNonce = input('get.nonce');
         $sReqTimestamp = input('get.timestamp');

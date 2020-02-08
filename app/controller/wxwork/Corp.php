@@ -17,7 +17,7 @@ class Corp extends BaseController
     }
     
     // 应用 数据回调 事件处理入口
-    public function actionHandle()
+    public function handle()
     {
         $corpId = input('get.corpid');
         $sReqNonce = input('get.nonce');
