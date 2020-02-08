@@ -60,47 +60,12 @@ class Index extends BaseController
         // }
     }
 
-    public function hello($name = 'ThinkPHP6')
+    /**
+     * 测试使用
+     */
+    public function installed()
     {
-        // 启动事务
-        Db::startTrans();
-        try {
-            $managerRole = VenueRole::where(['name' => '管理员', 'type' => VenueRole::TYPE_MANAGER])->find();
-            $managerRole || $managerRole = VenueRole::create(['name' => '管理员', 'type' => VenueRole::TYPE_MANAGER]);
-            $managerRole->status != VenueRole::STATUS_NORMAL && $managerRole->save(['status' => VenueRole::STATUS_NORMAL]);
-            
-            $securityRole = VenueRole::where(['name' => '安保人员', 'type' => VenueRole::TYPE_SECURITY])->find();
-            $securityRole || $securityRole = VenueRole::create(['name' => '安保人员', 'type' => VenueRole::TYPE_SECURITY]);
-            $securityRole->status != VenueRole::STATUS_NORMAL && $securityRole->save(['status' => VenueRole::STATUS_NORMAL]);
-
-            $customRole = VenueRole::where(['name' => '自定义角色', 'type' => VenueRole::TYPE_CUNSTOM])->find();
-            $customRole || $customRole = VenueRole::create(['name' => '自定义角色', 'type' => VenueRole::TYPE_CUNSTOM]);
-            $customRole->status != VenueRole::STATUS_NORMAL && $customRole->save(['status' => VenueRole::STATUS_NORMAL]);
-
-            $member1 = VenueMember::create(['user_id' => 1, 'name' => '三哥']);
-            $member2 = VenueMember::create(['user_id' => 2, 'name' => '四哥']);
-            $member3 = VenueMember::create(['user_id' => 3, 'name' => '五哥']);
-
-            $roleMember = new VenueRoleMember();
-            $roleMember->saveAll([
-                ['rid' => $managerRole->id, 'mid' => $member1->id], 
-                ['rid' => $managerRole->id, 'mid' => $member2->id], 
-                ['rid' => $managerRole->id, 'mid' => $member3->id], 
-                ['rid' => $securityRole->id, 'mid' => $member1->id], 
-                ['rid' => $securityRole->id, 'mid' => $member2->id], 
-                ['rid' => $securityRole->id, 'mid' => $member3->id], 
-                ['rid' => $customRole->id, 'mid' => $member1->id], 
-                ['rid' => $customRole->id, 'mid' => $member2->id], 
-                ['rid' => $customRole->id, 'mid' => $member3->id]
-            ]);
-            
-            Db::commit(); // 提交事务
-        } catch (\Exception $e) {
-            echo $e->getMessage();
-            Db::rollback(); // 回滚事务
-        }
-
-        //return json($datas);
+        return json(input('get.'));
     }
 
     public function request()
@@ -111,11 +76,6 @@ class Index extends BaseController
     public function phpinfo()
     {
         echo phpinfo();
-    }
-
-    public function installed()
-    {
-        return json(input('get.'));
     }
 
     public function asyncRet()
