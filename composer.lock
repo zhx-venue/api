@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0937e31106a1564bfb734c4324234e82",
+    "content-hash": "f3649d3dbf9262431aa5ccf4f9a1d8c0",
     "packages": [
         {
             "name": "lcobucci/jwt",
@@ -69,16 +69,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "1.0.63",
+            "version": "1.0.64",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6"
+                "reference": "d13c43dbd4b791f815215959105a008515d1a2e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/8132daec326565036bc8e8d1876f77ec183a7bd6",
-                "reference": "8132daec326565036bc8e8d1876f77ec183a7bd6",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/d13c43dbd4b791f815215959105a008515d1a2e0",
+                "reference": "d13c43dbd4b791f815215959105a008515d1a2e0",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -96,7 +96,7 @@
             },
             "require-dev": {
                 "phpspec/phpspec": "^3.4",
-                "phpunit/phpunit": "^5.7.10"
+                "phpunit/phpunit": "^5.7.26"
             },
             "suggest": {
                 "ext-fileinfo": "Required for MimeType",
@@ -155,7 +155,7 @@
                 "sftp",
                 "storage"
             ],
-            "time": "2020-01-04T16:30:31+00:00"
+            "time": "2020-02-05T18:14:17+00:00"
         },
         {
             "name": "league/flysystem-cached-adapter",
@@ -532,16 +532,16 @@
         },
         {
             "name": "shophy/wxwork",
-            "version": "v0.1.1",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shophy1987/wxwork.git",
-                "reference": "0cd9bd7015e0b02d9bc808b428579559242b7228"
+                "reference": "c5f38eef0c1928c030cddf67d91fc23cad8bc38a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shophy1987/wxwork/zipball/0cd9bd7015e0b02d9bc808b428579559242b7228",
-                "reference": "0cd9bd7015e0b02d9bc808b428579559242b7228",
+                "url": "https://api.github.com/repos/shophy1987/wxwork/zipball/c5f38eef0c1928c030cddf67d91fc23cad8bc38a",
+                "reference": "c5f38eef0c1928c030cddf67d91fc23cad8bc38a",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -567,7 +567,7 @@
                 }
             ],
             "description": "wxwork-php-sdk",
-            "time": "2020-01-07T08:15:06+00:00"
+            "time": "2020-02-08T06:59:24+00:00"
         },
         {
             "name": "thans/tp-jwt-auth",
@@ -741,16 +741,16 @@
         },
         {
             "name": "topthink/think-orm",
-            "version": "v2.0.30",
+            "version": "v2.0.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/top-think/think-orm.git",
-                "reference": "b6f61fc243974a25cb6914b84a529b373a717626"
+                "reference": "d6965dfae21f150e29cc899ab6f9b1bd2c0f2ee4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/top-think/think-orm/zipball/b6f61fc243974a25cb6914b84a529b373a717626",
-                "reference": "b6f61fc243974a25cb6914b84a529b373a717626",
+                "url": "https://api.github.com/repos/top-think/think-orm/zipball/d6965dfae21f150e29cc899ab6f9b1bd2c0f2ee4",
+                "reference": "d6965dfae21f150e29cc899ab6f9b1bd2c0f2ee4",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -788,7 +788,7 @@
                 "database",
                 "orm"
             ],
-            "time": "2020-01-02T09:09:50+00:00"
+            "time": "2020-01-07T10:05:10+00:00"
         }
     ],
     "packages-dev": [
@@ -920,16 +920,16 @@
         },
         {
             "name": "symfony/var-dumper",
-            "version": "v4.4.2",
+            "version": "v4.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/var-dumper.git",
-                "reference": "be330f919bdb395d1e0c3f2bfb8948512d6bdd99"
+                "reference": "46b53fd714568af343953c039ff47b67ce8af8d6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/be330f919bdb395d1e0c3f2bfb8948512d6bdd99",
-                "reference": "be330f919bdb395d1e0c3f2bfb8948512d6bdd99",
+                "url": "https://api.github.com/repos/symfony/var-dumper/zipball/46b53fd714568af343953c039ff47b67ce8af8d6",
+                "reference": "46b53fd714568af343953c039ff47b67ce8af8d6",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -998,7 +998,7 @@
                 "debug",
                 "dump"
             ],
-            "time": "2019-12-18T13:41:29+00:00"
+            "time": "2020-01-25T12:44:29+00:00"
         },
         {
             "name": "topthink/think-trace",
