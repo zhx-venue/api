@@ -7,6 +7,8 @@ use app\model\VenueUser;
 use app\model\VenueMember;
 use app\model\VenueSchool;
 use app\model\VenueSchoolType;
+use app\model\VenueRole;
+use app\model\VenueRoleMember;
 
 /**
  * 企业微信应用授权后的一些任务处理
@@ -34,14 +36,15 @@ class CreateAuth
                 $schoolInfo = VenueSchool::create([
                     'title' => $permanentInfo->auth_corp_info->corp_name,
                     'corpid' => $permanentInfo->auth_corp_info->corpid,
-                    'created_by' => $schoolInfo->updated_by = $userInfo->id
+                    'created_by' => $userInfo->id, 
+                    'updated_by' => $userInfo->id
                 ]);
             }
 
             // 添加管理员成员记录
             VenueMember::clear($schoolInfo->id);
             $member = VenueMember::create([
-                'user_id' => $userInfo->userid,
+                'user_id' => $userInfo->id,
                 'school_id' => $schoolInfo->id,
                 'name' => $userInfo->name,
                 'avatar' => $userInfo->avatar

@@ -15,7 +15,7 @@ use shophy\wxwork\structs\Agent;
 use app\miniprogram\Api as MiniApi;
 use think\exception\ValidateException;
 
-class index extends BaseController
+class Index extends BaseController
 {
     // 初始化
     protected function initialize()
@@ -111,6 +111,11 @@ class index extends BaseController
     public function phpinfo()
     {
         echo phpinfo();
+    }
+
+    public function installed()
+    {
+        return json(input('get.'));
     }
 
     public function asyncRet()

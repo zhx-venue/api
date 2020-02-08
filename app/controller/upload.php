@@ -8,7 +8,7 @@ use app\BaseController;
 use app\model\VenueFile;
 use think\exception\ValidateException;
 
-class upload extends BaseController
+class Upload extends BaseController
 {
     const MAX_SIZE = 20971520; // 20M
     const EXT_IMAGE = 'png,jpg,jpeg,bmp,gif';

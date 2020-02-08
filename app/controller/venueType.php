@@ -9,7 +9,7 @@ use app\model\VenueSchoolType;
 use app\validate\VenueType as VVenueType;
 use think\exception\ValidateException;
 
-class venueType extends BaseController
+class VenueType extends BaseController
 {
     /**
      * 显示资源列表

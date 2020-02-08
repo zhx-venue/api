@@ -7,7 +7,7 @@ use think\Request;
 use app\BaseController;
 use think\exception\ValidateException;
 
-class venue extends BaseController
+class Venue extends BaseController
 {
     public $modelClass = 'app\model\Venue';
     public $validateClass = 'app\validate\Venue';

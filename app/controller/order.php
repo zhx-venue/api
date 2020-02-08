@@ -6,7 +6,7 @@ namespace app\controller;
 use think\Request;
 use app\BaseController;
 
-class order extends BaseController
+class Order extends BaseController
 {
     /**
      * 显示资源列表

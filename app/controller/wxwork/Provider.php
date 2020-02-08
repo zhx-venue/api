@@ -35,7 +35,7 @@ class Provider extends BaseController
             return json((new ServiceProvider())->GetLoginInfo($authCode));
 
             //$this->redirect($this->module->params['BACK_DOMAIN'].'?auth_code='.$authCode);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return $e->getMessage();
         }
     }

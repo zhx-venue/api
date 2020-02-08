@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f3649d3dbf9262431aa5ccf4f9a1d8c0",
+    "content-hash": "25ecdd245f4aab5aec65c5f0e302e411",
     "packages": [
         {
             "name": "lcobucci/jwt",
@@ -532,16 +532,16 @@
         },
         {
             "name": "shophy/wxwork",
-            "version": "v0.1.2",
+            "version": "v0.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shophy1987/wxwork.git",
-                "reference": "c5f38eef0c1928c030cddf67d91fc23cad8bc38a"
+                "reference": "a1195fefb61f94b7ea1c5c80d9ba55f122060e52"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shophy1987/wxwork/zipball/c5f38eef0c1928c030cddf67d91fc23cad8bc38a",
-                "reference": "c5f38eef0c1928c030cddf67d91fc23cad8bc38a",
+                "url": "https://api.github.com/repos/shophy1987/wxwork/zipball/a1195fefb61f94b7ea1c5c80d9ba55f122060e52",
+                "reference": "a1195fefb61f94b7ea1c5c80d9ba55f122060e52",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -567,7 +567,7 @@
                 }
             ],
             "description": "wxwork-php-sdk",
-            "time": "2020-02-08T06:59:24+00:00"
+            "time": "2020-02-08T10:58:27+00:00"
         },
         {
             "name": "thans/tp-jwt-auth",

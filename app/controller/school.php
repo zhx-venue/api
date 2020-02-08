@@ -6,7 +6,7 @@ namespace app\controller;
 use think\Request;
 use app\BaseController;
 
-class school extends BaseController
+class School extends BaseController
 {
     public $modelClass = 'app\model\VenueSchool';
 

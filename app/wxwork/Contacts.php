@@ -133,7 +133,7 @@ class Contacts
         $corpPrivilege = CorpPrivilege::find($corpInfo->id);
         if (empty($corpPrivilege))  return [];
 
-        $corpPrivilege->allow_user = json_decode($corpPrivilege->allow_user, true);
+        $corpPrivilege->allow_user = explode(',', $corpPrivilege->allow_user);
         foreach ($corpPrivilege->allow_user as $value) {
             if (empty($value))  continue;
 

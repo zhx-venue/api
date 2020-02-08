@@ -7,7 +7,7 @@ use think\Request;
 use app\BaseController;
 use app\model\VenueRole;
 
-class role extends BaseController
+class Role extends BaseController
 {
     /**
      * 显示资源列表

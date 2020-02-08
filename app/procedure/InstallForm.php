@@ -6,6 +6,7 @@ use think\facade\Db;
 use app\model\Corp;
 use app\model\CorpAgent;
 use app\model\CorpHistory;
+use app\model\CorpPrivilege;
 use app\model\VenueUser;
 use shophy\wxwork\structs\Message;
 use shophy\wxwork\structs\NewsArticle;
@@ -83,14 +84,13 @@ class InstallForm
                 $agentPrivilege = CorpPrivilege::find($this->permanentInfo->auth_corp_info->corpid);
                 $agentPrivilege || $agentPrivilege = new CorpPrivilege;
                 $agentPrivilege->corpid = $this->permanentInfo->auth_corp_info->corpid;
-                $agentPrivilege->agentid = $agentInfo->agentid;
                 isset($agentInfo->privilege->level) && $agentPrivilege->level = $agentInfo->privilege->level;
-                isset($agentInfo->privilege->allow_party) && $agentPrivilege->allow_party = $agentInfo->privilege->allow_party;
-                isset($agentInfo->privilege->allow_tag) && $agentPrivilege->allow_tag = $agentInfo->privilege->allow_tag;
-                isset($agentInfo->privilege->allow_user) && $agentPrivilege->allow_user = $agentInfo->privilege->allow_user;
-                isset($agentInfo->privilege->extra_party) && $agentPrivilege->extra_party = $agentInfo->privilege->extra_party;
-                isset($agentInfo->privilege->extra_user) && $agentPrivilege->extra_user = $agentInfo->privilege->extra_user;
-                isset($agentInfo->privilege->extra_tag) && $agentPrivilege->extra_tag = $agentInfo->privilege->extra_tag;
+                isset($agentInfo->privilege->allow_party) && $agentPrivilege->allow_party = implode(',', $agentInfo->privilege->allow_party);
+                isset($agentInfo->privilege->allow_tag) && $agentPrivilege->allow_tag = implode(',', $agentInfo->privilege->allow_tag);
+                isset($agentInfo->privilege->allow_user) && $agentPrivilege->allow_user = implode(',', $agentInfo->privilege->allow_user);
+                isset($agentInfo->privilege->extra_party) && $agentPrivilege->extra_party = implode(',', $agentInfo->privilege->extra_party);
+                isset($agentInfo->privilege->extra_user) && $agentPrivilege->extra_user = implode(',', $agentInfo->privilege->extra_user);
+                isset($agentInfo->privilege->extra_tag) && $agentPrivilege->extra_tag = implode(',', $agentInfo->privilege->extra_tag);
                 $agentPrivilege->save();
             }
 

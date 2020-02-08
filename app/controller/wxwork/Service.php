@@ -5,6 +5,7 @@ namespace app\controller\wxwork;
 use app\BaseController;
 use app\wxwork\MsgCrypt;
 use app\wxwork\Service as WxService;
+use app\procedure\CreateAuth;
 use app\procedure\InstallForm;
 use app\procedure\ServiceResponse;
 use shophy\wxwork\structs\SessionInfo;
@@ -67,7 +68,7 @@ class Service extends BaseController
                     'userid' => $installForm->permanentInfo->auth_user_info->userid,
                 ]);
                 $cipherText = base64_encode(json_encode($authData, JSON_UNESCAPED_UNICODE));
-                redirect('/installed?cipher_text='.urlencode($cipherText))->send();
+                redirect('/index/installed?cipher_text='.urlencode($cipherText))->send();
 
                 // 初始化学校主体信息
                 CreateAuth::deal($installForm->permanentInfo);
@@ -98,15 +99,15 @@ class Service extends BaseController
                 exit($sReplyEchoStr);
             } else {
                 trace('['.$corpId.']'.' VerifyURL error : '.$errCode, 'error');
-                exit;
+                return;
             }
         }
 
         $xmlData = '';
-        $errCode = $wxcpt->DecryptMsg($sReqMsgSignature, $sReqTimestamp, $sReqNonce, input('post.'), $xmlData);
+        $errCode = $wxcpt->DecryptMsg($sReqMsgSignature, $sReqTimestamp, $sReqNonce, $this->request->getInput(), $xmlData);
         if($errCode !== 0) {
-            trace('['.$corpId.']'.' DecryptMsg error : '.$errCode, 'error');
-            exit;
+            trace('['.$corpId.']'.' DecryptMsg error : '.$errCode.' : '.$this->request->getInput(), 'error');
+            return;
         }
 
         trace('['.$corpId.']'.' xml data : '.$xmlData, 'info');

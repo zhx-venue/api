@@ -7,7 +7,7 @@ use think\Request;
 use app\BaseController;
 use app\model\VenueVisitor;
 
-class visitor extends BaseController
+class Visitor extends BaseController
 {
     public $modelClass = 'app\model\VenueVisitor';
 
