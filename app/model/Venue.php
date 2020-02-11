@@ -286,6 +286,18 @@ class Venue extends BaseModel
     }
 
     /**
+     * 读取场地封面图片
+     */
+    public function getImage()
+    {
+        return VenueFile::alias('vf')
+            ->field('vf.id,vf.name,vf.url,vf.path,vf.ext,vf.mime_type,vf.size,vf.width,vf.height')
+            ->join(VenueImage::getTable().' vi', 'vi.image_id=vf.id')
+            ->where('vi.venue_id', $this->id)
+            ->select();
+    }
+
+    /**
      * 格式化场地开放时间
      */
     public function getOpentime()
@@ -308,17 +320,8 @@ class Venue extends BaseModel
         return ['counts' => round($bitCounts/2, 1), 'ranges' => $ranges];
     }
 
-    public function getImage()
-    {
-        return VenueFile::alias('vf')
-            ->field('vf.id,vf.name,vf.url,vf.path,vf.ext,vf.mime_type,vf.size,vf.width,vf.height')
-            ->join(VenueImage::getTable().' vi', 'vi.image_id=vf.id')
-            ->where('vi.venue_id', $this->id)
-            ->select();
-    }
-
     /**
-     * 解析开发时间段
+     * 解析开放时间段
      * @param 开放时间段 $timeRange = [
             ['stime' => 1578967200, 'etime' => 1578974400],
             ['stime' => 1578981600, 'etime' => 1578992400],

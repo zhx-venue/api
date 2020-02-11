@@ -29,35 +29,12 @@ class Index extends BaseController
 
     public function index()
     {
-        $model = new \app\model\Venue;
-
-        $timeRange = [
-            ['stime' => 1578963500, 'etime' => 1578974400],
-            ['stime' => 1578981600, 'etime' => 1578992400],
-            ['stime' => 1578999600, 'etime' => 1579006800]
-        ];
-        $model->open_time = $model->parseOpentime($timeRange);dump($model->open_time);
-        dump($model->calculateMaxtime($model->open_time));
-
-        $opentime = $model->getOpentime();dump($opentime);
-        // VenueRole::initData(1);
-        // VenueType::initData();
-        // VenueSchoolType::initData(1);
-        
-        // $role = VenueRole::where('type', VenueRole::TYPE_MANAGER)->find();
-        // dump($role->members);
-
-        // VenueRole::clear(0);
-        // VenueMember::clear(0);
-
-        // try {
-        //     $result = validate(valVenueMember::class)->batch(true)->check(
-        //         ['name'  => 'thinkphp', 'email' => 'thinkphp@qq.com']
-        //     );
-        // } catch (ValidateException $e) {
-        //     // 验证失败 输出错误信息
-        //     dump($e->getError());
-        // }
+        $response = json(['err' => 1]);
+        if ($response instanceof \think\Response) {
+            echo 'reponse';
+        } else {
+            echo 'xxx';
+        }
     }
 
     /**

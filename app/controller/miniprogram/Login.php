@@ -37,4 +37,18 @@ class Login extends BaseController
         isset($res['session_key']) && $userToken['session_key'] = isset($res['session_key']);
         return $this->jsonOk($userToken);
     }
+
+    /**
+     * 小程序登录测试接口
+     */
+    public function test()
+    {
+        $mobile = input('get.mobile');
+        $visitor = VenueVisitor::where('mobile', $mobile)->find();
+        if (empty($visitor))    return $this->jsonErr('无访客信息', 401);
+
+        $userToken = User::generateToken($visitor);
+        isset($res['session_key']) && $userToken['session_key'] = isset($res['session_key']);
+        return $this->jsonOk($userToken);
+    }
 }

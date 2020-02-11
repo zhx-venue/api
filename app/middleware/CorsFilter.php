@@ -20,7 +20,7 @@ class CorsFilter
 
     public function __construct(Config $config)
     {
-        $this->cookieDomain = $config->get('cookie.domain', '');
+        $this->cookieDomain = $config->get('cors.domain', '');
         $this->cookieDomain = empty($this->cookieDomain) ? [] : explode(',', $this->cookieDomain);
     }
 

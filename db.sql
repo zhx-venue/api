@@ -202,8 +202,8 @@ CREATE TABLE `zhx_venue` (
   `school_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '学校记录ID',
   `type` int(11) NOT NULL DEFAULT '0' COMMENT '场馆类型',
   `open_time` bigint unsigned NOT NULL DEFAULT '0' COMMENT '开放时间(每bit代表半小时，有效位数48)',
-  `max_continuous` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '最大连续开放时间',
-  `limit_ordertime` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '单用户单次预约时间限制',
+  `max_continuous` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '最大连续开放时间(单位半小时)',
+  `limit_ordertime` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '单用户单次预约时间限制(单位半小时)',
   `option` tinyint NOT NULL DEFAULT '0' COMMENT '标志位(bit1:是否关闭;bit2:是否室外场地;)',
   `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
   `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
@@ -222,8 +222,8 @@ CREATE TABLE `zhx_venue_facility` (
   `type` int(11) NOT NULL DEFAULT '0' COMMENT '场馆类型',
   `title` varchar(32) NOT NULL DEFAULT '' COMMENT '设施名称',
   `open_time` bigint unsigned NOT NULL DEFAULT '0' COMMENT '开放时间(每bit代表半小时，有效位数48)',
-  `max_continuous` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '最大连续开放时间',
-  `limit_ordertime` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '单用户单次预约时间限制',
+  `max_continuous` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '最大连续开放时间(单位半小时)',
+  `limit_ordertime` tinyint unsigned NOT NULL DEFAULT '0' COMMENT '单用户单次预约时间限制(单位半小时)',
   `option` tinyint NOT NULL DEFAULT '0' COMMENT '标志位(bit1:是否关闭;bit2:是否室外场地;)',
   `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
   `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
@@ -319,6 +319,7 @@ CREATE TABLE `zhx_venue_order` (
   `facility_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '设施记录ID',
   `odate` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '预约的日期',
   `open_time` bigint unsigned NOT NULL DEFAULT '0' COMMENT '预约时间(每bit代表半小时，有效位数48)',
+  `people_counts` tinyint NOT NULL DEFAULT '1' COMMENT '到场人数',
   `process` tinyint NOT NULL DEFAULT '0' COMMENT '状态(-1:已取消;0:待审核;1:待签到;2:待签退;3:已退订;4:已签退;)',
   `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
   `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
@@ -326,9 +327,9 @@ CREATE TABLE `zhx_venue_order` (
   `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
   `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
   PRIMARY KEY (`id`),
+  KEY `INX_VENUEID` (`venue_id`) USING BTREE,
   KEY `INX_SCHOOLID` (`school_id`) USING BTREE,
-  KEY `INX_VISITORID` (`visitor_id`) USING BTREE,
-  KEY `INX_FACILITYID` (`facility_id`) USING BTREE
+  KEY `INX_VISITORID` (`visitor_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆预约记录表';
 
 SET FOREIGN_KEY_CHECKS = 1;

@@ -136,7 +136,10 @@ class BaseModel extends Model
                     if (stripos($key, 'filter_') === 0) {
                         $key = substr($key, 7);
                         $where = $this->formatFilter($key, $value);
-                        $where && $query = $query ? $query->where($key, $where[0], $where[1]) : static::where($key, $where[0], $where[1]);
+                        if ($where) {
+                            count($where) <= 2 && array_unshift($where, $key);
+                            $query = $query ? $query->where($where[0], $where[1], $where[2]) : static::where($where[0], $where[1], $where[2]);
+                        }
                     }
                 }
             }

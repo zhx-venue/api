@@ -8,7 +8,7 @@ return [
     // cookie 保存路径
     'path'      => '/',
     // cookie 有效域名
-    'domain'    => env('cookie.domain', 'http://front.venue.com,http://localhost:8888'),
+    'domain'    => env('cookie.domain', '.venue.com'),
     //  cookie 启用安全传输
     'secure'    => false,
     // httponly设置

@@ -61,6 +61,11 @@ class Login extends BaseController
             return $this->jsonErr('无效的参数');
         }
 
+        if ($userInfo instanceof \think\Response) {
+            var_dump($schoolInfo);
+            return $userInfo;
+        }
+
         // 生成授权信息
         $userToken = User::generateToken($userInfo, $schoolInfo->id);
 
@@ -76,7 +81,7 @@ class Login extends BaseController
         return $this->jsonOk($userToken);
     }
 
-    private function _getUserByCorpid($corpid, VenueSchool $schoolInfo=null)
+    private function _getUserByCorpid($corpid, VenueSchool &$schoolInfo=null)
     {
         $code = input('get.code');
         if (empty($corpid) || empty($code)) return $this->jsonErr('invalid code');
@@ -94,8 +99,7 @@ class Login extends BaseController
             if (empty($wxUserInfo)) return $this->jsonErr('获取企业成员信息失败');
             if (!isset($wxUserInfo->UserId))    return $this->jsonErr('非企业成员无权限访问');
         } catch (\Exception $e) {
-            trace('获取企业微信用户信息失败：'.$e->getMessage(), 'error');
-            return $this->jsonErr('企业用户信息获取失败');
+            return $this->jsonErr('企业用户信息获取失败'.$e->getMessage());
         }
 
         $userInfo = VenueUser::where(['corpid' => $corpInfo->corpid, 'userid' => $wxUserInfo->UserId])->find();
@@ -134,8 +138,7 @@ class Login extends BaseController
                 $managerRole = VenueRole::where(['school_id' => $schoolInfo->id, 'type' => VenueRole::TYPE_MANAGER])->find();
                 $managerRole && VenueRoleMember::create(['rid' => $managerRole->id, 'mid' => $membInfo->id], [], true);
             } catch (\Exception $e) {
-                trace('初始化用户信息失败：'.$e->getMessage(), 'error');
-                return $this->jsonErr('用户信息获取失败');
+                return $this->jsonErr('用户信息获取失败'.$e->getMessage());
             }
             
             unset($userInfo);
@@ -146,7 +149,7 @@ class Login extends BaseController
         return $userInfo;
     }
 
-    private function _getUserByAuthCode($auth_code, VenueSchool $schoolInfo=null)
+    private function _getUserByAuthCode($auth_code, VenueSchool &$schoolInfo=null)
     {
         if (empty($auth_code))  return $this->jsonErr('无效的参数');
 
@@ -213,7 +216,7 @@ class Login extends BaseController
         return $userInfo;
     }
 
-    private function _getUserByCipherText($cipher_text, VenueSchool $schoolInfo=null)
+    private function _getUserByCipherText($cipher_text, VenueSchool &$schoolInfo=null)
     {
         if (empty($cipherText)) return $this->jsonErr('cipher_text不能为空');
 

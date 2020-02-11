@@ -31,6 +31,13 @@ class Venue extends BaseController
     }
 
     /**
+     * 访客搜索场地
+     */
+    public function search()
+    {
+    }
+
+    /**
      * 保存新建的资源
      *
      * @param  \think\Request  $request
@@ -82,9 +89,9 @@ class Venue extends BaseController
             (new $this->modelClass)->updateItem($id, $data);
         } catch (ValidateException $e) {
             return $this->jsonErr($e->getError());
-        } //catch (\Exception $e) {
-        //     return $this->jsonErr($e->getMessage());
-        // }
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
 
         return $this->jsonOk();
     }
