@@ -111,10 +111,6 @@ class VenueOrder extends BaseModel
         $orderInfo->process = $data['process'];
         $orderInfo->updated_by = app()->user->id;
         if (!($orderInfo->save()))   throw new \Exception('更新失败');
-
-        switch($data['process']) {
-            default: {  }
-        }
     }
 
     public function getVisitor()
