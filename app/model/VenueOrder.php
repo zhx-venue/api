@@ -108,44 +108,12 @@ class VenueOrder extends BaseModel
             if (!($auths['pos'] & 3))   throw new \Exception('无权限更新该记录');
         }
 
-        Db::startTrans();
-        try {
-            // 更新场地记录
-            $venueInfo->updated_by = app()->user->id ?? 0;
-            $venueInfo->save();
+        $orderInfo->process = $data['process'];
+        $orderInfo->updated_by = app()->user->id;
+        if (!($orderInfo->save()))   throw new \Exception('更新失败');
 
-            // 删除不需要的设备
-            (isset($delFacility) && !empty($delFacility)) && VenueFacility::update(['status' => self::STATUS_DELETE], ['id' => array_keys($delFacility)]);
-            // 更新保留的设备
-            if (isset($updateFacility)) {
-                foreach ($updateFacility as $_upFacility) {
-                    $_upFacility->updated_by = app()->user->id ?? 0;
-                    $_upFacility->save();
-                }
-            }
-            // 添加新的设备
-            if (isset($addFacility)) {
-                foreach ($addFacility as $_addFacility) {
-                    $_addFacility->status = self::STATUS_NORMAL;
-                    $_addFacility->school_id = app()->user->schoolid ?? 0;
-                    $_addFacility->created_by = app()->user->id ?? 0;
-                    $_addFacility->updated_by = app()->user->id ?? 0;
-
-                    $find = VenueFacility::where(['school_id' => app()->user->schoolid, 'title' => $_addFacility->title])->find();
-                    $find ? VenueFacility::update($_addFacility->getData(), ['id' => $find->id]) : $_addFacility->save();
-                }
-            }
-
-            // 删除不需要的场地图片
-            isset($delImages) && VenueImage::destroy($delImages);
-            // 添加新的场地图片
-            (isset($addImages) && empty($addImages)) || (new VenueImage)->saveAll(array_values($addImages));
-
-            Db::commit(); // 提交事务
-        } catch (\Exception $e) {
-             Db::rollback(); // 回滚事务
-            trace('添加场地失败:'.$e->getMessage(), 'error');
-            throw new \Exception('添加场地失败');
+        switch($data['process']) {
+            default: {  }
         }
     }
 

@@ -72,7 +72,7 @@ class Login extends BaseController
         // 输出学校信息
         $userToken['school'] = [
             'id' => $schoolInfo->id, 
-            'name' => $schoolInfo->name
+            'name' => $schoolInfo->title
         ];
 
         // 获取用户权限信息

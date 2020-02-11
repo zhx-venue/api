@@ -1,6 +1,4 @@
 <?php
-declare (strict_types = 1);
-
 namespace app\controller;
 
 use think\Request;
@@ -9,7 +7,7 @@ use app\model\VenueSchoolType;
 use app\validate\VenueType as VVenueType;
 use think\exception\ValidateException;
 
-class VenueType extends BaseController
+class Venuetype extends BaseController
 {
     /**
      * 显示资源列表
