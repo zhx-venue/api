@@ -21,6 +21,7 @@ class Venue extends BaseModel
                 $value = is_array($value) ? $value : array_keys(array_flip(array_filter(explode(',', strval($value)))));
                 return count($value) > 1 ? ['in', $value] : ['=', array_shift($value)];
             }
+            case 'school_id' : { return ['=', intval($value)]; }
         }
 
         return null;
@@ -40,7 +41,7 @@ class Venue extends BaseModel
         if ($venueImage->isEmpty()) throw new \Exception('不存在的场地图片');
 
         // 开放时间校验
-        $opentime = $this->parseOpentime($data['opentime']);
+        $opentime = self::parseOpentime($data['opentime']);
         if ($opentime <= 0)   throw new \Exception('请选择开放时间');
 
         $option = 0;
@@ -74,7 +75,7 @@ class Venue extends BaseModel
                     $_facility['binside'] == 0 ? ($facilityInfo['option'] |= 2) : ($facilityInfo['option'] &= ~2);
                 }
                 if (isset($_facility['opentime'])) {
-                    $opentime = $this->parseOpentime($_facility['opentime']);
+                    $opentime = self::parseOpentime($_facility['opentime']);
                     if ($opentime > 0) {
                         $facilityInfo['open_time'] = $opentime;
                         $facilityInfo['max_continuous'] = $this->calculateMaxtime($opentime);
@@ -122,7 +123,7 @@ class Venue extends BaseModel
             $data['binside'] == 0 ? ($venueInfo->option |= 2) : ($venueInfo->option &= ~2);
         }
         if (isset($data['opentime'])) {
-            $venueInfo->open_time = $this->parseOpentime($data['opentime']);
+            $venueInfo->open_time = self::parseOpentime($data['opentime']);
             if ($venueInfo->open_time <= 0) throw new \Exception('无效的开放时间');
 
             $venueInfo->max_continuous = $this->calculateMaxtime($venueInfo->open_time);
@@ -162,7 +163,7 @@ class Venue extends BaseModel
                     $_facility['binside'] == 0 ? ($findObject->option |= 2) : ($findObject->option &= ~2);
                 }
                 if (isset($_facility['opentime'])) {
-                    $opentime = $this->parseOpentime($_facility['opentime']);
+                    $opentime = self::parseOpentime($_facility['opentime']);
                     if ($opentime > 0) {
                         $findObject->open_time = $opentime;
                         $findObject->max_continuous = $this->calculateMaxtime($opentime);
@@ -328,7 +329,7 @@ class Venue extends BaseModel
             ['stime' => 1578999600, 'etime' => 1579006800]
         ];
      */
-    public function parseOpentime($timeRange)
+    public static function parseOpentime($timeRange)
     {
         $opentime = 0;
         foreach ($timeRange as $_range) {

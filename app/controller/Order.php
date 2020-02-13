@@ -94,4 +94,13 @@ class Order extends BaseController
 
         return $this->jsonOk();
     }
+
+    /**
+     * 生成签到签退二维码
+     * 
+     * * @param  int  $id
+     */
+    public function qrcode($id)
+    {
+    }
 }

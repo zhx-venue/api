@@ -31,12 +31,13 @@ class Index extends BaseController
 
     public function index()
     {
-        $response = json(['err' => 1]);
-        if ($response instanceof \think\Response) {
-            echo 'reponse';
-        } else {
-            echo 'xxx';
-        }
+        $xdeode = new \app\helper\XDeode;
+        $secret = $xdeode->encode(123);
+        echo $secret . ' - ' . $xdeode->decode($secret) . "\r\n";
+        $secret = $xdeode->encode(9950);
+        echo $secret . ' - ' . $xdeode->decode($secret) . "\r\n";
+        $secret = $xdeode->encode(9960);
+        echo $secret . ' - ' . $xdeode->decode($secret) . "\r\n";
     }
 
     /**

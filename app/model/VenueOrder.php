@@ -4,6 +4,7 @@ declare (strict_types = 1);
 namespace app\model;
 
 use app\BaseModel;
+use app\helper\XDeode;
 
 /**
  * @mixin think\Model
@@ -46,7 +47,7 @@ class VenueOrder extends BaseModel
     public function addItem($data)
     {
         // 场地数据校验
-        $venueFacility = VenueFacility::find($data['facility_id']);
+        $venueFacility = VenueFacility::where(['id' => $data['facility_id'], 'status' => self::STATUS_NORMAL])->find();
         if (empty($venueFacility)) throw new \Exception('无效的场地设备');
 
         // 检查场地是否开放
@@ -80,7 +81,7 @@ class VenueOrder extends BaseModel
             'visitor_id' => app()->user->id, 
             'venue_id' => $venueFacility->venue_id, 
             'facility_id' => $venueFacility->id, 
-            'odate' => date('Ymd 0:0:0', intval($data['order_time']['stime'])), 
+            'odate' => strtotime(date('Ymd 0:0:0', intval($data['order_time']['stime']))), 
             'open_time' => $orderTime, 
             'people_counts' => $data['people_counts'], 
             'process' => self::PROCESS_CHECKING, 
@@ -121,5 +122,44 @@ class VenueOrder extends BaseModel
     public function getSchool()
     {
         return VenueSchool::find($this->school_id);
+    }
+
+    /**
+     * 获取预约记录唯一识别码
+     */
+    public function getUniquecode()
+    {
+        return (new XDeode)->encode($this->id);
+    }
+
+    /**
+     * 解析预约记录唯一识别码
+     */
+    public function parseUniquecode($code)
+    {
+        return (new XDeode)->decode($code);
+    }
+
+    /**
+     * 格式化场地开放时间
+     */
+    public function getOpentime()
+    {
+        $bitCounts = 0;
+        $timeRange = [];
+        for ($i = 0; $i < 48; ++$i) {
+            $bopen = $this->open_time & (1<<$i);
+            $bopen && $bitCounts++;
+            ($bopen && !(count($timeRange)%2)) && $timeRange[] = date('Y年m月d日 H:i', $this->odate+$i*1800);
+            (!$bopen && (count($timeRange)%2)) && $timeRange[] = date('Y年m月d日 H:i', $this->odate+$i*1800);
+        }
+
+        $ranges = [];
+        $timeRange = array_chunk($timeRange, 2);
+        foreach ($timeRange as $_range) {
+            $ranges[] = $_range[0].'~'.$_range[1];
+        }
+
+        return ['counts' => round($bitCounts/2, 1), 'ranges' => $ranges];
     }
 }

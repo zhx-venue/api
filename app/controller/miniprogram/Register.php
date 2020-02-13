@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace app\controller\miniprogram;
 
 use app\BaseController;
+use app\model\User;
 use app\model\VenueVisitor;
 use app\validate\VenueVisitor as VVenueVisitor;
 use think\exception\ValidateException;
@@ -34,6 +35,11 @@ class register extends BaseController
             return $this->jsonErr($e->getMessage());
         }
 
-        return $this->jsonOk();
+        $visitor = VenueVisitor::where('openid', $data['openid'])->find();
+        if (empty($visitor))    return $this->jsonErr('注册失败');
+
+        $userToken = User::generateToken($visitor);
+        isset($data['session_key']) && $userToken['session_key'] = isset($data['session_key']);
+        return $this->jsonOk($userToken);
     }
 }

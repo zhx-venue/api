@@ -32,8 +32,12 @@ class Login extends BaseController
             return $this->jsonErr($e->getMessage());
         }
 
+        $openid = $res['openid'] ?? '';
+        $sessionKey = $res['session_key'] ?? '';
+        if (empty($openid)) return $this->jsonErr('获取用户信息失败');
+
         $visitor = VenueVisitor::where('openid', $res['openid'])->find();
-        if (empty($visitor))    return $this->jsonErr('无访客信息', 401, ['openid' => $res['openid']]);
+        if (empty($visitor))    return $this->jsonErr('无访客信息', 401, ['openid' => $openid, 'session_key' => $sessionKey]);
 
         $userToken = User::generateToken($visitor);
         isset($res['session_key']) && $userToken['session_key'] = isset($res['session_key']);

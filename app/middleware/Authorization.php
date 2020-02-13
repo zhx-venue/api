@@ -9,6 +9,14 @@ use thans\jwt\exception\TokenExpiredException;
 
 class Authorization extends BaseMiddleware
 {
+    protected function setAuthentication($response, $token = null)
+    {
+        $token = $token ?: $this->auth->refresh();
+        $this->auth->setToken($token);
+
+        return $response->header(['Authorization' => 'Bearer '.$token]);
+    }
+
     /**
      * 处理请求
      *

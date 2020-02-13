@@ -21,20 +21,13 @@ class Venue extends BaseController
     {
         $model = new $this->modelClass;
         $query = $model->parseFilter();
-        if ($query) {
-            $query = $query->where(['school_id' => app()->user->schoolid, 'status' => $this->modelClass::STATUS_NORMAL]);
-        } else {
-            $query = $this->modelClass::where(['school_id' => app()->user->schoolid, 'status' => $this->modelClass::STATUS_NORMAL]);
+        $query || $query = $this->modelClass::where(['status' => $this->modelClass::STATUS_NORMAL]);
+        if (app()->user->type == User::TYPE_USER) {
+            // 企业微信管理员只能查看本校的场地
+            $query->where(['school_id' => app()->user->schoolid]);
         }
 
         return json($model->listItem($query));
-    }
-
-    /**
-     * 访客搜索场地
-     */
-    public function search()
-    {
     }
 
     /**
