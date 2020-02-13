@@ -265,7 +265,7 @@ class Venue extends BaseModel
     /**
      * 读取场地类型名称
      */
-    public function getTypeInfo()
+    public function getTypeinfo()
     {
         return VenueType::find($this->getAttr('type'));
     }

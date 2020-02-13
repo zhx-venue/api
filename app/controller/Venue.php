@@ -6,6 +6,7 @@ namespace app\controller;
 use think\Request;
 use app\BaseController;
 use think\exception\ValidateException;
+use app\model\User;
 
 class Venue extends BaseController
 {

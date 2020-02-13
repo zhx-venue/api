@@ -118,7 +118,7 @@ class VenueRole extends BaseModel
         $uid = intval($uid);
         $uid > 0 || $uid = intval(app()->user->id);
         $schoolId = intval($schoolId);
-        $schoolId > 0 && $schoolId = intval(app()->user->schoolid);
+        $schoolId > 0 || $schoolId = intval(app()->user->schoolid);
         if ($uid <= 0 || $schoolId <= 0)    return ['pos' => 0, 'module' => []];
         if (isset($_auths[$uid][$schoolId]))    return $_auths[$uid][$schoolId];
 
@@ -135,8 +135,9 @@ class VenueRole extends BaseModel
         $memInfo = VenueMember::where(['school_id' => $schoolId, 'user_id' => $uid])->find();
         if (empty($memInfo))    return $_auths[$uid][$schoolId];
 
-        foreach ($memInfo->roles as $role) {
-            switch($role->type) {
+        $memberRoles = $memInfo->getRole();
+        foreach ($memberRoles as $role) {
+            switch($role->getAttr('type')) {
                 case self::TYPE_MANAGER: { $_auths[$uid][$schoolId]['pos'] |= 1; return $_auths[$uid][$schoolId]; }
                 case self::TYPE_SECURITY: { $_auths[$uid][$schoolId]['pos'] |= 2; break; }
                 default: { $roleIds[] = $role->id; }
@@ -144,7 +145,7 @@ class VenueRole extends BaseModel
         }
         if (!isset($roleIds))   return $_auths[$uid][$schoolId];
 
-        VenueRoleAuth::where(['rid' => $roleIds])->chunk(100, function ($modules) {
+        VenueRoleAuth::where(['rid' => $roleIds])->chunk(100, function ($modules) use(&$_auths) {
             foreach($modules as $value){
                 if (isset($_auths[$uid][$schoolId]['module'][$value->module])) {
                     $_auths[$uid][$schoolId]['module'][$value->module] |= $value->auth_data;
@@ -153,7 +154,7 @@ class VenueRole extends BaseModel
                 }
             }
         });
-
+        
         return $_auths[$uid][$schoolId];
     }
 

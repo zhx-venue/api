@@ -62,7 +62,7 @@ HTML;
     private function _upload($image=false)
     {
         // 获取表单上传文件
-        $files = request()->file();
+        $files = request()->file('upFile');
         try {
             validate([
                 'upFile' => 'filesize:'.self::MAX_SIZE.'|fileExt:'.self::EXT_IMAGE.($image ? '' : (','.self::EXT_REGULAR))
@@ -71,10 +71,17 @@ HTML;
                 'upFile.filesize' => '文件大小不能超过'.intval(self::MAX_SIZE/1024/1024).'M', 
                 'upFile.fileExt' => '仅支持'.self::EXT_IMAGE.($image ? '' : (','.self::EXT_REGULAR)).'文件格式', 
             ])
-            ->check($files);
+            ->check(['upFile' => $files]);
+
+            $isMulti = false;
+            if (is_object($files)) {
+                $files = [$files];
+            } else {
+                $isMulti = true;
+            }
             
             $uploads = [];
-            foreach($files['upFile'] as $file) {
+            foreach($files as $file) {
                 $md5 = $file->md5();
                 $sha1 = $file->sha1();
                 $find = VenueFile::where(['md5' => $md5, 'sha1' => $sha1])->find();
@@ -114,6 +121,6 @@ HTML;
             return $this->jsonErr($e->getMessage());
         }
 
-        return json(['files' => $uploads ?? []]);
+        return $isMulti ? json(['files' => $uploads ?? []]) : json(empty($uploads) ? null : array_shift($uploads));
     }
 }

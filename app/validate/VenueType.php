@@ -16,7 +16,7 @@ class VenueType extends Validate
 	protected $rule = [
         'id'    => ['require', 'regex' => '^[0-9]*[1-9][0-9]*$'],
         'title' => ['require', 'max' => 32], 
-        'order' => ['regex' => 'number']
+        'sort' => ['regex' => 'number']
     ];
     
     /**
@@ -35,7 +35,7 @@ class VenueType extends Validate
     // edit 验证场景定义
     public function sceneAdd()
     {
-        return $this->only(['title', 'order']);
+        return $this->only(['title', 'sort']);
     }
 
     // delete 验证场景定义

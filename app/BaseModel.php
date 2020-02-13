@@ -62,7 +62,7 @@ class BaseModel extends Model
      */
     public function listItem($query, $expand=null)
     {
-        $pageCur = $query->getOptions('page');
+        $pageInfo = $query->getOptions('page');
         $pageSize = $query->getOptions('limit');
         if ($pageSize) {
             $clone = clone($query);
@@ -88,7 +88,7 @@ class BaseModel extends Model
         }
         
         return [
-            'page' => $pageCur ? intval($pageCur) : 1, 
+            'page' => $pageInfo ? intval($pageInfo[0]) : 1, 
             'psize' => $pageSize ? intval($pageSize) : 0, 
             'ptotal' => $pageCount ?? 1,
             'counts' => $totalCount ?? 0, 
@@ -122,7 +122,7 @@ class BaseModel extends Model
                 }
                 case 'page': {
                     $page = intval($value);
-                    $page > 0 || $page = 1;
+                    $page > 0 || $page = 1;trace('====1:'.$page, 'info');
                     $query = $query ? $query->page($page) : static::page($page);
                     break;
                 }

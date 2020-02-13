@@ -4,4 +4,5 @@
 /runtime/*
 *.log
 .env
+/public/storage/*
 /public/.user.ini

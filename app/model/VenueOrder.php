@@ -162,4 +162,72 @@ class VenueOrder extends BaseModel
 
         return ['counts' => round($bitCounts/2, 1), 'ranges' => $ranges];
     }
+
+    /**
+     * 统计预约数据
+     * @param int $stime 开始统计时间
+     * @param int $etime 结束统计时间
+     * @param array $expand 要统计的数据
+     */
+    public static function statisInfo($stime, $etime, $expand)
+    {
+        $info = [];
+        foreach ($expand as $_exField) {
+            $method = '_statis'.ucfirst($_exField);
+            if (method_exists(static::class, $method)) {
+                $info[$_exField] = null;
+            }
+        }
+
+        $counts = 0;
+        self::where('school_id', app()->user->schoolid)
+        ->where('process', '<>', self::PROCESS_CANCEL)
+        ->where('status', self::STATUS_NORMAL)
+        ->where('odate', '>=', strtotime(date('Ymd 0:0:0', intval($stime))))
+        ->where('odate', '<=', strtotime(date('Ymd 0:0:0', intval($etime))))
+        ->chunk(100, function ($records) use (&$counts, &$info) {
+            foreach ($records as $record) {
+                ++$counts;
+
+                foreach ($info as $_exField => $value) {
+                    $method = '_statis'.ucfirst($_exField);
+                    $record->$method($info[$_exField]);
+                }
+            }
+        });
+
+        $info['counts'] = $counts;
+        return $info;
+    }
+
+    private function _statisHours(&$value)
+    {
+        $orderTimes = [];
+        for ($i = 0; $i < 48; ++$i) {
+            $bopen = $this->open_time & (1<<$i);
+            $bopen && $orderTimes[intval($i/2)] = 1;
+        }
+
+        $value = $value ?? [];
+        foreach ($orderTimes as $_hour => $_val) {
+            if (isset($value[$_hour])) {
+                ++$value[$_hour];
+            } else {
+                $value[$_hour] = 1;
+            }
+        }
+    }
+
+    private function _statisVenuetype(&$value) 
+    {
+        $value = $value ?? [];
+        if (isset($value[$this->venue_id])) {
+            ++$value[$this->venue_id]['counts'];
+        } else {
+            $typeTitle = VenueType::alias('vt')
+                ->join(Venue::getTable().' v', 'v.type=vt.id')
+                ->where(['v.id' => $this->venue_id])->value('vt.title');
+            empty($typeTitle) || $value[$this->venue_id] = ['id' => $this->venue_id, 'title' => $typeTitle, 'counts' => 1];
+        }
+    }
 }
