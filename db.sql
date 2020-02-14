@@ -320,7 +320,7 @@ CREATE TABLE `zhx_venue_order` (
   `odate` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '预约的日期',
   `open_time` bigint unsigned NOT NULL DEFAULT '0' COMMENT '预约时间(每bit代表半小时，有效位数48)',
   `people_counts` tinyint NOT NULL DEFAULT '1' COMMENT '到场人数',
-  `process` tinyint NOT NULL DEFAULT '0' COMMENT '状态(-1:已取消;0:待审核;1:待签到;2:待签退;3:已退订;4:已签退;)',
+  `process` tinyint NOT NULL DEFAULT '0' COMMENT '状态(-1:已取消;0:待审核;1:待签到;2:待签退;3:已退订;4:已签退;5:已拒绝;)',
   `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
   `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
   `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',

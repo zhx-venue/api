@@ -333,7 +333,7 @@ class Venue extends BaseModel
     {
         $opentime = 0;
         foreach ($timeRange as $_range) {
-            if (!isset($_range['stime']) || !isset($_range['stime']))   continue;
+            if (!isset($_range['stime']) || !isset($_range['etime']))   continue;
             
             $stime = strtotime(date('Ymd H:i:0', $_range['stime'])) - strtotime(date('Ymd 0:0:0', $_range['stime']));
             $etime = strtotime(date('Ymd H:i:0', $_range['etime'])) - strtotime(date('Ymd 0:0:0', $_range['etime']));

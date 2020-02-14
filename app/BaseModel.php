@@ -122,7 +122,7 @@ class BaseModel extends Model
                 }
                 case 'page': {
                     $page = intval($value);
-                    $page > 0 || $page = 1;trace('====1:'.$page, 'info');
+                    $page > 0 || $page = 1;
                     $query = $query ? $query->page($page) : static::page($page);
                     break;
                 }

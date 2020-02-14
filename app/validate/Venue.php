@@ -97,7 +97,7 @@ class Venue extends Validate
         $bvalid = true;
         if (is_array($value)) {
             foreach ($value as $_val) {
-                if (!(isset($_val['stime']) && is_numeric($_val['stime']) && isset($_val['etime']) && is_numeric($_val['etime']))) {
+                if (!(isset($_val['stime']) && is_numeric($_val['stime']) && isset($_val['etime']) && is_numeric($_val['etime'])) || $_val['stime'] > $_val['etime']) {
                     $bvalid = false;
                     break;
                 }

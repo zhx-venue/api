@@ -17,6 +17,7 @@ class VenueOrder extends BaseModel
     const PROCESS_SIGNOUTING = 2; // 待签退
     const PROCESS_REVOKED = 3; // 已退订
     const PROCESS_SIGNOUTED = 4; // 已签退
+    const PROCESS_REFUSED = 5; // 已拒绝
 
     /**
      * 格式化字段的查询条件
@@ -105,8 +106,58 @@ class VenueOrder extends BaseModel
             if (app()->user->schoolid != $orderInfo->school_id) throw new \Exception('无权限更新该记录');
 
             // 获取用户权限信息
-            $auths = VenueRole::getUserAuth();
-            if (!($auths['pos'] & 3))   throw new \Exception('无权限更新该记录');
+            $userAuths = VenueRole::getUserAuth();
+            if (!($userAuths['pos'] & 3))   throw new \Exception('无权限更新该记录');
+        }
+
+        switch (intval($orderInfo->process)) {
+            case self::PROCESS_CANCEL: // 已取消
+            case self::PROCESS_REVOKED: // 已退订
+            case self::PROCESS_REFUSED: // 已拒绝
+            case self::PROCESS_SIGNOUTED: { //已签退
+                throw new \Exception('该预约已结束');
+            }
+            case self::PROCESS_CHECKING: { // 待审核
+                if ($data['process'] == self::PROCESS_CANCEL) {
+                    if (app()->user->type != User::TYPE_VISITOR) {
+                        throw new \Exception('只允许取消自己的预约记录');
+                    }
+                } elseif ($data['process'] == self::PROCESS_SIGNING) {
+                    // 只有管理员有审核权限
+                    if (! (isset($userAuths) && $userAuths['pos'] & 1)) {
+                        throw new \Exception('仅允许学校管理员审核');
+                    }
+                } else {
+                    throw new \Exception('该预约记录当前不支持该操作');
+                }
+                break;
+            }
+            case self::PROCESS_SIGNING: { // 待签到
+                if ($data['process'] == self::PROCESS_REVOKED) {
+                    if (app()->user->type != User::TYPE_VISITOR) {
+                        throw new \Exception('只允许退订自己的预约记录');
+                    }
+                } elseif ($data['process'] == self::PROCESS_SIGNOUTING) {
+                    // 只有管理员和安保人员有同意签到入场权限
+                    if (! (isset($userAuths) && $userAuths['pos'] & 3)) {
+                        throw new \Exception('仅允许学校管理员和安保人员签到');
+                    }
+                } else {
+                    throw new \Exception('该预约记录当前不支持该操作');
+                }
+                break;
+            }
+            case self::PROCESS_SIGNOUTING: { // 待签退
+                if ($data['process'] == self::PROCESS_SIGNOUTED) {
+                    // 只有管理员和安保人员有同意签退离场权限
+                    if (! (isset($userAuths) && $userAuths['pos'] & 3)) {
+                        throw new \Exception('仅允许学校管理员和安保人员签退');
+                    }
+                } else {
+                    throw new \Exception('该预约记录当前不支持该操作');
+                }
+                break;
+            }
         }
 
         $orderInfo->process = $data['process'];
