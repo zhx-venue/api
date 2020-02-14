@@ -5,6 +5,7 @@ namespace app\controller;
 
 use think\Request;
 use app\BaseController;
+use app\model\VenueRole;
 
 class School extends BaseController
 {

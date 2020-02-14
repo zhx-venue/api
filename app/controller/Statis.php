@@ -7,6 +7,7 @@ use think\Request;
 use app\BaseController;
 use app\exception\AccessException;
 use app\model\User;
+use app\model\VenueRole;
 use app\model\VenueOrder;
 
 class Statis extends BaseController

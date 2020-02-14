@@ -8,6 +8,7 @@ use app\BaseController;
 use app\model\VenueSchoolType;
 use app\validate\VenueType as VVenueType;
 use think\exception\ValidateException;
+use app\model\VenueRole;
 
 class Venuetype extends BaseController
 {

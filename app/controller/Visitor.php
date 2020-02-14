@@ -5,6 +5,7 @@ namespace app\controller;
 
 use think\Request;
 use app\BaseController;
+use app\model\VenueRole;
 use app\model\VenueVisitor;
 
 class Visitor extends BaseController

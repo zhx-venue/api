@@ -7,6 +7,7 @@ use think\Request;
 use app\BaseController;
 use think\exception\ValidateException;
 use app\model\User;
+use app\model\VenueRole;
 
 class Venue extends BaseController
 {

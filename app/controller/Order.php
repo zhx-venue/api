@@ -6,6 +6,7 @@ namespace app\controller;
 use think\Request;
 use app\BaseController;
 use app\model\User;
+use app\model\VenueRole;
 
 class Order extends BaseController
 {
