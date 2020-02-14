@@ -18,6 +18,8 @@ class Visitor extends BaseController
      */
     public function index()
     {
+        if (!checkAuth(VenueRole::MD_VISITOR))   throw new AccessException('无权限进行该操作');
+
         return json((new VenueVisitor)->listItem());
     }
 
@@ -29,6 +31,8 @@ class Visitor extends BaseController
      */
     public function read($id)
     {
+        if (!checkAuth(VenueRole::MD_VISITOR))   throw new AccessException('无权限进行该操作');
+
         $query = $this->modelClass::where(['id' => $id]);
         return json((new $this->modelClass)->getItem($query));
     }

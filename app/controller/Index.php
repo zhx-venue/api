@@ -31,13 +31,7 @@ class Index extends BaseController
 
     public function index()
     {
-        $xdeode = new \app\helper\XDeode;
-        $secret = $xdeode->encode(123);
-        echo $secret . ' - ' . $xdeode->decode($secret) . "\r\n";
-        $secret = $xdeode->encode(9950);
-        echo $secret . ' - ' . $xdeode->decode($secret) . "\r\n";
-        $secret = $xdeode->encode(9960);
-        echo $secret . ' - ' . $xdeode->decode($secret) . "\r\n";
+        var_dump(app());
     }
 
     /**

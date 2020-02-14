@@ -20,9 +20,11 @@ class Venue extends BaseController
      */
     public function index()
     {
+        if (!checkAuth(VenueRole::MD_VENUE))   throw new AccessException('无权限进行该操作');
+
         $model = new $this->modelClass;
         $query = $model->parseFilter();
-        $query || $query = $this->modelClass::where(['status' => $this->modelClass::STATUS_NORMAL]);
+        $query->where(['status' => $this->modelClass::STATUS_NORMAL]);
         if (app()->user->type == User::TYPE_USER) {
             // 企业微信管理员只能查看本校的场地
             $query->where(['school_id' => app()->user->schoolid]);
@@ -39,6 +41,8 @@ class Venue extends BaseController
      */
     public function save(Request $request)
     {
+        if (!checkAuth(VenueRole::MD_VENUE, 1))   throw new AccessException('无权限进行该操作');
+
         $data = input('post.');
         try {
             validate($this->validateClass)->scene('add')->batch(true)->check($data);
@@ -61,6 +65,8 @@ class Venue extends BaseController
      */
     public function read($id)
     {
+        if (!checkAuth(VenueRole::MD_VENUE))   throw new AccessException('无权限进行该操作');
+
         $query = $this->modelClass::where(['id' => $id, 'school_id' => app()->user->schoolid]);
         return json((new $this->modelClass)->getItem($query));
     }
@@ -74,6 +80,7 @@ class Venue extends BaseController
      */
     public function update(Request $request, $id)
     {
+        if (!checkAuth(VenueRole::MD_VENUE, 1))   throw new AccessException('无权限进行该操作');
         if (!(is_numeric($id) && ($id = intval($id)) > 0))  return $this->jsonErr('无效的id');
 
         $data = input('post.');
@@ -98,6 +105,8 @@ class Venue extends BaseController
      */
     public function delete($id)
     {
+        if (!checkAuth(VenueRole::MD_VENUE, 1))   throw new AccessException('无权限进行该操作');
+        
         $data = ['id' => $id];
         try {
             validate($this->validateClass)->scene('del')->batch(true)->check($data);

@@ -16,6 +16,8 @@ class Role extends BaseController
      */
     public function index()
     {
+        if (!checkAuth(VenueRole::MD_ROLE))   throw new AccessException('无权限进行该操作');
+
         return json(VenueRole::where(['school_id' => app()->user->schoolid, 'status' => VenueRole::STATUS_NORMAL])->select());
     }
 }

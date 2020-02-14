@@ -19,9 +19,11 @@ class Order extends BaseController
      */
     public function index()
     {
+        if (!checkAuth(VenueRole::MD_ORDER))   throw new AccessException('无权限进行该操作');
+
         $model = new $this->modelClass;
         $query = $model->parseFilter();
-        $query || $query = $this->modelClass::where(['status' => $this->modelClass::STATUS_NORMAL]);
+        $query->where(['status' => $this->modelClass::STATUS_NORMAL]);
         if (app()->user->type == User::TYPE_VISITOR) {
             // 访客智能查看自己的预约记录
             $query->where(['visitor_id' => app()->user->id]);
@@ -41,6 +43,8 @@ class Order extends BaseController
      */
     public function save(Request $request)
     {
+        if (!checkAuth(VenueRole::MD_ORDER, 1))   throw new AccessException('无权限进行该操作');
+
         // 仅限访客身份预定
         if (app()->user->type != User::TYPE_VISITOR)    return $this->jsonErr('仅限访客预定');
 
@@ -66,6 +70,8 @@ class Order extends BaseController
      */
     public function read($id)
     {
+        if (!checkAuth(VenueRole::MD_ORDER))   throw new AccessException('无权限进行该操作');
+
         $query = $this->modelClass::where(['id' => $id]);
         return json((new $this->modelClass)->getItem($query));
     }
@@ -79,6 +85,7 @@ class Order extends BaseController
      */
     public function update(Request $request, $id)
     {
+        if (!checkAuth(VenueRole::MD_ORDER, 1))   throw new AccessException('无权限进行该操作');
         if (!(is_numeric($id) && ($id = intval($id)) > 0))  return $this->jsonErr('无效的id');
 
         $data = input('post.');
@@ -102,5 +109,6 @@ class Order extends BaseController
      */
     public function qrcode($id)
     {
+        if (!checkAuth(VenueRole::MD_ORDER))   throw new AccessException('无权限进行该操作');
     }
 }

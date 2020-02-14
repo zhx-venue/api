@@ -17,13 +17,11 @@ class School extends BaseController
      */
     public function index()
     {
+        if (!checkAuth(VenueRole::MD_SCHOOL))   throw new AccessException('无权限进行该操作');
+
         $model = new $this->modelClass;
         $query = $model->parseFilter();
-        if ($query) {
-            $query = $query->where(['status' => $this->modelClass::STATUS_NORMAL]);
-        } else {
-            $query = $this->modelClass::where(['status' => $this->modelClass::STATUS_NORMAL]);
-        }
+        $query->where(['status' => $this->modelClass::STATUS_NORMAL]);
 
         return json($model->listItem($query));
     }
@@ -33,6 +31,8 @@ class School extends BaseController
      */
     public function list_by_venue()
     {
+        if (!checkAuth(VenueRole::MD_SCHOOL))   throw new AccessException('无权限进行该操作');
+
         $type = input('get.type', 0, 'intval');
         $page = input('get.page', 1, 'intval');
         $psize = input('get.psize', $this->modelClass::SIZE_PER_PAGE, 'intval');

@@ -102,7 +102,7 @@ class BaseModel extends Model
      */
     public function parseFilter($filter=null)
     {
-        $query = null;
+        $query = (new static)->db();
         $filter = $filter ?? input('get.');
         foreach ($filter as $key => $value) {
             switch ($key) {
@@ -117,19 +117,17 @@ class BaseModel extends Model
                             $orders[$_filed] = 'asc';
                         }
                     }
-                    empty($orders) || $query = $query ? $query->order($orders) : static::order($orders);
+                    empty($orders) || $query->order($orders);
                     break;
                 }
                 case 'page': {
                     $page = intval($value);
-                    $page > 0 || $page = 1;
-                    $query = $query ? $query->page($page) : static::page($page);
+                    $query->page($page > 0 ? $page : 1);
                     break;
                 }
                 case 'psize': {
                     $psize = intval($value);
-                    $psize > 0 || $psize = self::SIZE_PER_PAGE;
-                    $query = $query ? $query->limit($psize) : static::limit($psize);
+                    $query->limit($psize > 0 ? $psize : self::SIZE_PER_PAGE);
                     break;
                 }
                 default: {
@@ -138,7 +136,7 @@ class BaseModel extends Model
                         $where = $this->formatFilter($key, $value);
                         if ($where) {
                             count($where) <= 2 && array_unshift($where, $key);
-                            $query = $query ? $query->where($where[0], $where[1], $where[2]) : static::where($where[0], $where[1], $where[2]);
+                            $query->where($where[0], $where[1], $where[2]);
                         }
                     }
                 }

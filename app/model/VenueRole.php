@@ -18,11 +18,15 @@ class VenueRole extends BaseModel
     /** 
      * 角色所有的权限模块与操作权限
     */
-    const MD_SYS = 1; // 系统管理
-    const MD_VENUE = 2; // 场地管理
-    const MD_ORDER = 3; // 预约管理
-    const MD_MEMBER = 4; // 成员管理
-    const MD_SETTING = 5; // 学校设置
+    const MD_SYS        = 1;    // 系统管理
+    const MD_VENUE      = 11;   // 场地管理
+    const MD_ROLE       = 12;   // 角色管理
+    const MD_MEMBER     = 13;   // 成员管理
+    const MD_SCHOOL     = 14;   // 学校管理
+    const MD_STATIS     = 15;   // 统计管理
+    const MD_VENUETYPE  = 16;   // 场地类型管理
+    const MD_ORDER      = 17;   // 预约管理
+    const MD_VISITOR    = 18;   // 访客管理
 
     /**
      * _t : 权限标题
@@ -33,25 +37,42 @@ class VenueRole extends BaseModel
             '_t' => '系统管理', 
             '_p' => [
                 0 => ['_t' => '预约设置', '_dv' => 0], 
-                1 => ['_t' => '访客黑名单', '_dv' => 0], 
+                1 => ['_t' => '访客黑名单', '_dv' => 0]
             ]
         ], 
         self::MD_VENUE => [
             '_t' => '场地管理', 
             '_p' => [
                 0 => ['_t' => '查看', '_dv' => 0], 
-                1 => ['_t' => '管理', '_dv' => 0],
-                2 => ['_t' => '类别管理', '_dv' => 0],
+                1 => ['_t' => '管理', '_dv' => 0]
+            ]
+        ], 
+        self::MD_ROLE => [
+            '_t' => '角色管理', 
+            '_p' => [
+                0 => ['_t' => '查看', '_dv' => 0], 
+                1 => ['_t' => '管理', '_dv' => 0]
+            ]
+        ], 
+        self::MD_SCHOOL => [
+            '_t' => '学校管理', 
+            '_p' => [
+                0 => ['_t' => '查看', '_dv' => 0], 
+                1 => ['_t' => '管理', '_dv' => 0]
+            ]
+        ], 
+        self::MD_VENUETYPE => [
+            '_t' => '场地类型管理', 
+            '_p' => [
+                0 => ['_t' => '查看', '_dv' => 0], 
+                1 => ['_t' => '管理', '_dv' => 0]
             ]
         ], 
         self::MD_ORDER => [
             '_t' => '预约管理', 
             '_p' => [
-                0 => ['_t' => '查看所有预约', '_dv' => 0], 
-                1 => ['_t' => '预约', '_dv' => 1], 
-                2 => ['_t' => '核验', '_dv' => 0],
-                3 => ['_t' => '审核', '_dv' => 0],
-                4 => ['_t' => '统计', '_dv' => 0]
+                0 => ['_t' => '查看', '_dv' => 0], 
+                1 => ['_t' => '管理', '_dv' => 0]
             ]
         ], 
         self::MD_MEMBER => [
@@ -61,10 +82,11 @@ class VenueRole extends BaseModel
                 1 => ['_t' => '管理', '_dv' => 0]
             ]
         ], 
-        self::MD_SETTING => [
-            '_t' => '学校设置', 
+        self::MD_VISITOR => [
+            '_t' => '访客管理', 
             '_p' => [
-                0 => ['_t' => '编辑', '_dv' => 0]
+                0 => ['_t' => '查看', '_dv' => 0],
+                1 => ['_t' => '管理', '_dv' => 0]
             ]
         ]
     ];
@@ -96,7 +118,10 @@ class VenueRole extends BaseModel
         // 管理员拥有所有权限
         if ($auths['pos'] & 1)  return true;
         // 安保人员可以查看所有预约、核验、统计
-        if ($auths['pos'] & 2 && ($module == self::MD_ORDER && in_array($positions, [0,2,4])))  return true;
+        if ($auths['pos'] & 2) {
+            if (in_array($module, [self::MD_ORDER, self::MD_STATIS]))    return true;
+            if ($module == self::MD_VISITOR && $position == 0)  return true;
+        }
 
         if (is_null($position)) {
             $isInAuth = isset($auths['module'][$module]);
@@ -223,6 +248,8 @@ class VenueRole extends BaseModel
      */
     public static function generateFlag($module, $position)
     {
+        $module = intval($module);
+        $position = intval($position);
         return intval(($module << 8) | $position);
     }
 
@@ -233,6 +260,42 @@ class VenueRole extends BaseModel
      */
     public static function parseFlag($flag)
     {
+        $flag = intval($flag);
         return [$flag >> 8, $flag & 255];
+    }
+
+    /**
+     * 获取游客权限数据
+     */
+    public static function getGuestAuth()
+    {
+        $auths = ['pos' => 0, 'module' => []];
+        $modules = [];
+        foreach ($modules as $module => $positions) {
+            foreach ($positions as $position) {
+                $auths[$module] = ($auths[$module] ?? 0) | (1<<$position);
+            }
+        }
+
+        return $auths;
+    }
+
+    /**
+     * 获取访客权限数据
+    */
+    public static function getVisitorAuth()
+    {
+        $auths = ['pos' => 0, 'module' => []];
+        $modules = [
+            self::MD_SCHOOL => [0],
+            self::MD_ORDER => [0,1,2,3,4],
+        ];
+        foreach ($modules as $module => $positions) {
+            foreach ($positions as $position) {
+                $auths[$module] = ($auths[$module] ?? 0) | (1<<$position);
+            }
+        }
+
+        return $auths;
     }
 }
