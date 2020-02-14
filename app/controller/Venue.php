@@ -68,7 +68,12 @@ class Venue extends BaseController
     {
         if (!checkAuth(VenueRole::MD_VENUE))   return $this->jsonErr('无权限进行该操作');
 
-        $query = $this->modelClass::where(['id' => $id, 'school_id' => app()->user->schoolid]);
+        $query = $this->modelClass::where(['id' => $id]);
+        if (app()->user->type == User::TYPE_USER) {
+            // 企业微信管理员只能查看本校的场地
+            $query->where(['school_id' => app()->user->schoolid]);
+        }
+
         return json((new $this->modelClass)->getItem($query));
     }
 

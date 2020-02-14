@@ -273,7 +273,7 @@ class VenueRole extends BaseModel
         $modules = [];
         foreach ($modules as $module => $positions) {
             foreach ($positions as $position) {
-                $auths[$module] = ($auths[$module] ?? 0) | (1<<$position);
+                $auths['module'][$module] = ($auths['module'][$module] ?? 0) | (1<<$position);
             }
         }
 
@@ -289,10 +289,12 @@ class VenueRole extends BaseModel
         $modules = [
             self::MD_SCHOOL => [0],
             self::MD_ORDER => [0,1,2,3,4],
+            self::MD_VENUE => [0],
+            self::MD_VENUETYPE => [0],
         ];
         foreach ($modules as $module => $positions) {
             foreach ($positions as $position) {
-                $auths[$module] = ($auths[$module] ?? 0) | (1<<$position);
+                $auths['module'][$module] = ($auths['module'][$module] ?? 0) | (1<<$position);
             }
         }
 
