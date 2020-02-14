@@ -6,7 +6,6 @@ namespace app\controller;
 use think\Request;
 use app\BaseController;
 use app\model\VenueRole;
-use app\exception\AccessException;
 
 class Role extends BaseController
 {
@@ -17,7 +16,7 @@ class Role extends BaseController
      */
     public function index()
     {
-        if (!checkAuth(VenueRole::MD_ROLE))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_ROLE))   return $this->jsonErr('无权限进行该操作');
 
         return json(VenueRole::where(['school_id' => app()->user->schoolid, 'status' => VenueRole::STATUS_NORMAL])->select());
     }

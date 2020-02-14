@@ -7,7 +7,6 @@ use think\Request;
 use app\BaseController;
 use app\model\VenueRole;
 use app\model\VenueVisitor;
-use app\exception\AccessException;
 
 class Visitor extends BaseController
 {
@@ -20,7 +19,7 @@ class Visitor extends BaseController
      */
     public function index()
     {
-        if (!checkAuth(VenueRole::MD_VISITOR))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VISITOR))   return $this->jsonErr('无权限进行该操作');
 
         return json((new VenueVisitor)->listItem());
     }
@@ -33,7 +32,7 @@ class Visitor extends BaseController
      */
     public function read($id)
     {
-        if (!checkAuth(VenueRole::MD_VISITOR))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VISITOR))   return $this->jsonErr('无权限进行该操作');
 
         $query = $this->modelClass::where(['id' => $id]);
         return json((new $this->modelClass)->getItem($query));

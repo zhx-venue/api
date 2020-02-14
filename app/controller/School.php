@@ -6,7 +6,6 @@ namespace app\controller;
 use think\Request;
 use app\BaseController;
 use app\model\VenueRole;
-use app\exception\AccessException;
 
 class School extends BaseController
 {
@@ -19,7 +18,7 @@ class School extends BaseController
      */
     public function index()
     {
-        if (!checkAuth(VenueRole::MD_SCHOOL))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_SCHOOL))   return $this->jsonErr('无权限进行该操作');
 
         $model = new $this->modelClass;
         $query = $model->parseFilter();
@@ -33,7 +32,7 @@ class School extends BaseController
      */
     public function list_by_venue()
     {
-        if (!checkAuth(VenueRole::MD_SCHOOL))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_SCHOOL))   return $this->jsonErr('无权限进行该操作');
 
         $type = input('get.type', 0, 'intval');
         $page = input('get.page', 1, 'intval');

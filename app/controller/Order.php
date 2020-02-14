@@ -7,7 +7,6 @@ use think\Request;
 use app\BaseController;
 use app\model\User;
 use app\model\VenueRole;
-use app\exception\AccessException;
 
 class Order extends BaseController
 {
@@ -21,7 +20,7 @@ class Order extends BaseController
      */
     public function index()
     {
-        if (!checkAuth(VenueRole::MD_ORDER))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_ORDER))    return $this->jsonErr('无权限进行该操作');
 
         $model = new $this->modelClass;
         $query = $model->parseFilter();
@@ -45,7 +44,7 @@ class Order extends BaseController
      */
     public function save(Request $request)
     {
-        if (!checkAuth(VenueRole::MD_ORDER, 1))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_ORDER, 1))   return $this->jsonErr('无权限进行该操作');
 
         // 仅限访客身份预定
         if (app()->user->type != User::TYPE_VISITOR)    return $this->jsonErr('仅限访客预定');
@@ -72,7 +71,7 @@ class Order extends BaseController
      */
     public function read($id)
     {
-        if (!checkAuth(VenueRole::MD_ORDER))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_ORDER))   return $this->jsonErr('无权限进行该操作');
 
         $query = $this->modelClass::where(['id' => $id]);
         return json((new $this->modelClass)->getItem($query));
@@ -87,7 +86,7 @@ class Order extends BaseController
      */
     public function update(Request $request, $id)
     {
-        if (!checkAuth(VenueRole::MD_ORDER, 1))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_ORDER, 1))   return $this->jsonErr('无权限进行该操作');
         if (!(is_numeric($id) && ($id = intval($id)) > 0))  return $this->jsonErr('无效的id');
 
         $data = input('post.');
@@ -111,6 +110,6 @@ class Order extends BaseController
      */
     public function qrcode($id)
     {
-        if (!checkAuth(VenueRole::MD_ORDER))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_ORDER))   return $this->jsonErr('无权限进行该操作');
     }
 }

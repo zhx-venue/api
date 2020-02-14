@@ -8,7 +8,6 @@ use app\BaseController;
 use think\exception\ValidateException;
 use app\model\User;
 use app\model\VenueRole;
-use app\exception\AccessException;
 
 class Venue extends BaseController
 {
@@ -22,7 +21,7 @@ class Venue extends BaseController
      */
     public function index()
     {
-        if (!checkAuth(VenueRole::MD_VENUE))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUE))   return $this->jsonErr('无权限进行该操作');
 
         $model = new $this->modelClass;
         $query = $model->parseFilter();
@@ -43,7 +42,7 @@ class Venue extends BaseController
      */
     public function save(Request $request)
     {
-        if (!checkAuth(VenueRole::MD_VENUE, 1))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUE, 1))   return $this->jsonErr('无权限进行该操作');
 
         $data = input('post.');
         try {
@@ -67,7 +66,7 @@ class Venue extends BaseController
      */
     public function read($id)
     {
-        if (!checkAuth(VenueRole::MD_VENUE))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUE))   return $this->jsonErr('无权限进行该操作');
 
         $query = $this->modelClass::where(['id' => $id, 'school_id' => app()->user->schoolid]);
         return json((new $this->modelClass)->getItem($query));
@@ -82,7 +81,7 @@ class Venue extends BaseController
      */
     public function update(Request $request, $id)
     {
-        if (!checkAuth(VenueRole::MD_VENUE, 1))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUE, 1))   return $this->jsonErr('无权限进行该操作');
         if (!(is_numeric($id) && ($id = intval($id)) > 0))  return $this->jsonErr('无效的id');
 
         $data = input('post.');
@@ -107,7 +106,7 @@ class Venue extends BaseController
      */
     public function delete($id)
     {
-        if (!checkAuth(VenueRole::MD_VENUE, 1))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUE, 1))   return $this->jsonErr('无权限进行该操作');
         
         $data = ['id' => $id];
         try {

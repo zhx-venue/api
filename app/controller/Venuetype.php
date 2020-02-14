@@ -9,7 +9,6 @@ use app\model\VenueSchoolType;
 use app\validate\VenueType as VVenueType;
 use think\exception\ValidateException;
 use app\model\VenueRole;
-use app\exception\AccessException;
 
 class Venuetype extends BaseController
 {
@@ -20,7 +19,7 @@ class Venuetype extends BaseController
      */
     public function index()
     {
-        if (!checkAuth(VenueRole::MD_VENUETYPE))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUETYPE))   return $this->jsonErr('无权限进行该操作');
         return json(VenueSchoolType::list(input('get.')));
     }
 
@@ -31,7 +30,7 @@ class Venuetype extends BaseController
      */
     public function create()
     {
-        if (!checkAuth(VenueRole::MD_VENUETYPE, 1))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUETYPE, 1))   return $this->jsonErr('无权限进行该操作');
 
         $data = input('post.');
         try {
@@ -55,7 +54,7 @@ class Venuetype extends BaseController
      */
     public function delete($id)
     {
-        if (!checkAuth(VenueRole::MD_VENUETYPE, 1))   throw new AccessException('无权限进行该操作');
+        if (!checkAuth(VenueRole::MD_VENUETYPE, 1))   return $this->jsonErr('无权限进行该操作');
         
         $data = ['id' => $id];
         try {
