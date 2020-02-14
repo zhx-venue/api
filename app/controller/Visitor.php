@@ -7,6 +7,7 @@ use think\Request;
 use app\BaseController;
 use app\model\VenueRole;
 use app\model\VenueVisitor;
+use app\exception\AccessException;
 
 class Visitor extends BaseController
 {

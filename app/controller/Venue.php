@@ -8,6 +8,7 @@ use app\BaseController;
 use think\exception\ValidateException;
 use app\model\User;
 use app\model\VenueRole;
+use app\exception\AccessException;
 
 class Venue extends BaseController
 {

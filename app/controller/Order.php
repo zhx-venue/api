@@ -7,6 +7,7 @@ use think\Request;
 use app\BaseController;
 use app\model\User;
 use app\model\VenueRole;
+use app\exception\AccessException;
 
 class Order extends BaseController
 {

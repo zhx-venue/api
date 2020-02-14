@@ -6,6 +6,7 @@ namespace app\controller;
 use think\Request;
 use app\BaseController;
 use app\model\VenueRole;
+use app\exception\AccessException;
 
 class School extends BaseController
 {
