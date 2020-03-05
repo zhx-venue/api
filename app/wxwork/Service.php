@@ -8,6 +8,8 @@ use shophy\wxwork\common\HttpUtils;
 
 class Service extends ServiceCorpAPI 
 {
+    protected $jsApiTicket = null; // string
+
     public function __construct(
         $authCorpId=null, 
         $permanentCode=null)
@@ -106,7 +108,7 @@ class Service extends ServiceCorpAPI
         // 尝试从缓存读取,corpid 作为key
         $this->jsApiTicket = $bflush ? '' : cache($this->authCorpId.'-'.$this->suite_secret.'jsapiTicket');
         if( ! Utils::notEmptyStr($this->jsApiTicket)) {
-            self::_HttpCall(self::GET_JSAPI_TICKET, 'GET', null); 
+            self::_HttpCall(self::GET_JSAPI_TICKET, 'GET', []); 
     
             // 写入缓存
             $this->jsApiTicket = $this->rspJson["ticket"];

@@ -5,7 +5,9 @@ namespace app\controller;
 
 use think\Request;
 use app\BaseController;
+use app\model\User;
 use app\model\VenueRole;
+use app\model\VenueOrder;
 use app\model\VenueVisitor;
 
 class Visitor extends BaseController
@@ -21,7 +23,16 @@ class Visitor extends BaseController
     {
         if (!checkAuth(VenueRole::MD_VISITOR))   return $this->jsonErr('无权限进行该操作');
 
-        return json((new VenueVisitor)->listItem());
+        $model = new $this->modelClass;
+        $query = $model->parseFilter();
+        $query->where(['status' => $this->modelClass::STATUS_NORMAL]);
+        if (app()->user->type == User::TYPE_USER) {
+            // 企业微信管理员只能查看预约过本校场地的访客
+            //$query->rightJoin(VenueOrder::getTable().' vo', 'vo.visitor_id='.($this->modelClass)::getTable().'.id')
+            //    ->where(['vo.school_id' => app()->user->schoolid]);
+        }
+
+        return json($model->listItem($query));
     }
 
     /**

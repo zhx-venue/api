@@ -12,6 +12,19 @@ use thans\jwt\facade\JWTAuth;
 class VenueVisitor extends BaseModel
 {
     /**
+     * 格式化字段的查询条件
+     */
+    protected function formatFilter($field, $value) 
+    {
+        switch ($field) {
+            case 'name' : { return ['like', '%'.$value.'%']; }
+            case 'mobile' : { return ['=', strval($value)]; }
+        }
+
+        return null;
+    }
+
+    /**
      * 添加访客
      */
     public function addItem($data)

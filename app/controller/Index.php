@@ -31,7 +31,7 @@ class Index extends BaseController
 
     public function index()
     {
-        var_dump(app());
+        return json(input('get.'));
     }
 
     /**

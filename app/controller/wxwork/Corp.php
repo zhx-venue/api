@@ -7,6 +7,12 @@ use app\BaseController;
 use app\wxwork\MsgCrypt;
 use app\procedure\CorpResponse;
 
+use app\wxwork\OAuth;
+use app\model\Corp as MCorp;
+use app\model\CorpAgent;
+use app\model\VenueSchool;
+use app\helper\StringHelper;
+
 class Corp extends BaseController
 {
     // 初始化
@@ -60,6 +66,36 @@ class Corp extends BaseController
             exit($sEncryptMsg);
         } else {
             trace('['.$corpId.']'.' EncryptMsg error : '.$errCode, 'error');
+        }
+    }
+
+    public function get_jsapi_sign()
+    {
+        $url = input('get.url');
+        $corpid = input('get.corpid');
+        if (empty($url) || empty($corpid))  return $this->jsonErr('无效的参数');
+        if (strpos($url, '#')) return $this->jsonErr('url中的#号无法识别');
+
+        $corpInfo = MCorp::find($corpid);
+        if (empty($corpInfo))   return $this->jsonErr('无效的CORPID');
+        $corpAgent = CorpAgent::find($corpInfo->corpid);
+        if (empty($corpAgent))  return $this->jsonErr('企业号未安装德育管理应用，请联系管理员');
+        $schoolInfo = VenueSchool::where('corpid', $corpInfo->corpid)->find();
+        if (empty($schoolInfo)) return $this->jsonErr('企业号未正确安装德育管理应用，请联系管理员重新安装');
+
+        try {
+            $now = time();
+            $nonceStr = StringHelper::getRandomStr(16);
+            $corpApi = OAuth::getCorpInstance($corpInfo->corpid);
+            $jsApiTicket = $corpApi->JsApiTicketGet();
+            $signature = $corpApi->JsApiSignatureGet($jsApiTicket, $nonceStr, $now, $url);
+            $data['appId'] = $corpid;
+            $data['timestamp'] = $now;
+            $data['nonceStr'] = $nonceStr;
+            $data['signature'] = $signature;
+            return $this->jsonOk($data);
+        } catch (\Exception $e) {
+            return $this->jsonErr('获取签名失败!'.$e->getMessage());
         }
     }
 }
