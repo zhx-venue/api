@@ -120,7 +120,7 @@ class VenueRole extends BaseModel
         // 安保人员可以查看所有预约、核验、统计
         if ($auths['pos'] & 2) {
             if (in_array($module, [self::MD_ORDER, self::MD_STATIS]))    return true;
-            if ($module == self::MD_VISITOR && $position == 0)  return true;
+            if (in_array($module, [self::MD_VENUE, self::MD_SCHOOL, self::MD_VENUETYPE, self::MD_MEMBER, self::MD_ROLE, self::MD_VISITOR]) && $position == 0)  return true;
         }
 
         if (is_null($position)) {
