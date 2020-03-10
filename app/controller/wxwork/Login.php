@@ -43,6 +43,8 @@ class Login extends BaseController
             'id' => $schoolInfo->id, 
             'title' => $schoolInfo->title
         ];
+        // 读取在学校的身份
+        $userToken['school']['member'] = VenueMember::where(['school_id' => $schoolInfo->id, 'user_id' => $userInfo->id])->find();
 
         // 获取用户权限信息
         $userToken['auths'] = VenueRole::getUserAuth($userInfo->id, $schoolInfo->id);
@@ -76,6 +78,8 @@ class Login extends BaseController
             'id' => $schoolInfo->id, 
             'name' => $schoolInfo->title
         ];
+        // 读取在学校的身份
+        $userToken['school']['member'] = VenueMember::where(['school_id' => $schoolInfo->id, 'user_id' => $userInfo->id])->find();
 
         // 获取用户权限信息
         $userToken['auths'] = VenueRole::getUserAuth($userInfo->id, $schoolInfo->id);
