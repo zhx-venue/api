@@ -34,7 +34,7 @@ class Venue extends Validate
         'type.regex'    => '无效的场地类型',
         'images.require'  => '场地图片必须',
         'facility.require'  => '场地设备必须',
-        'opentime.require'  => '场地开发时间必须'
+        'opentime.require'  => '场地开放时间必须'
     ];
 
     // edit 验证场景定义

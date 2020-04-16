@@ -29,7 +29,8 @@ class VenueOrder extends BaseModel
                 return ['odate', '=', strtotime(date('Ymd 0:0:0', intval($value)))];
             }
             case 'venue_id': 
-            case 'school_id': { return ['=', intval($value)]; }
+            case 'school_id': 
+            case 'visitor_id': { return ['=', intval($value)]; }
             case 'process': {
                 if (is_numeric($value)) {
                     return ['=', intval($value)];
@@ -70,7 +71,8 @@ class VenueOrder extends BaseModel
 
         // 检查预约时间是否已经被预约
         $orderedTime = 0;
-        $orderedTimes = self::where(['venue_id' => $venueFacility->venue_id, 'facility_id' => $venueFacility->id])->where('process', 'not in', [self::PROCESS_CANCEL, self::PROCESS_REVOKED])->column('open_time');
+        $orderedDate = strtotime(date('Ymd 0:0:0', intval($data['order_time']['stime'])));
+        $orderedTimes = self::where(['venue_id' => $venueFacility->venue_id, 'facility_id' => $venueFacility->id, 'odate' => $orderedDate, 'status' => self::STATUS_NORMAL])->where('process', 'not in', [self::PROCESS_CANCEL, self::PROCESS_REVOKED])->column('open_time');
         foreach ($orderedTimes as $value) {
             $orderedTime |= intval($value);
         }
@@ -82,7 +84,7 @@ class VenueOrder extends BaseModel
             'visitor_id' => app()->user->id, 
             'venue_id' => $venueFacility->venue_id, 
             'facility_id' => $venueFacility->id, 
-            'odate' => strtotime(date('Ymd 0:0:0', intval($data['order_time']['stime']))), 
+            'odate' => $orderedDate, 
             'open_time' => $orderTime, 
             'people_counts' => $data['people_counts'], 
             'process' => self::PROCESS_CHECKING, 
@@ -165,6 +167,15 @@ class VenueOrder extends BaseModel
         if (!($orderInfo->save()))   throw new \Exception('更新失败');
     }
 
+    public function getFacility()
+    {
+        return VenueFacility::alias('vf')
+            ->field('vf.*,vt.title as vtitle')
+            ->join(VenueType::getTable().' vt', 'vt.id=vf.type')
+            ->where(['vf.id' => $this->facility_id])
+            ->find();
+    }
+
     public function getVisitor()
     {
         return VenueVisitor::find($this->visitor_id);
@@ -186,7 +197,7 @@ class VenueOrder extends BaseModel
     /**
      * 解析预约记录唯一识别码
      */
-    public function parseUniquecode($code)
+    public static function parseUniquecode($code)
     {
         return (new XDeode)->decode($code);
     }
@@ -212,6 +223,14 @@ class VenueOrder extends BaseModel
         }
 
         return ['counts' => round($bitCounts/2, 1), 'ranges' => $ranges];
+    }
+
+    /**
+     * 读取预约记录的操作记录
+     */
+    public function getHistory()
+    {
+        return VenueOrderHistory::where(['order_id' => $this->id])->select();
     }
 
     /**

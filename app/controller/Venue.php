@@ -74,7 +74,11 @@ class Venue extends BaseController
             $query->where(['school_id' => app()->user->schoolid]);
         }
 
-        return json((new $this->modelClass)->getItem($query));
+        try {
+            return json((new $this->modelClass)->getItem($query));
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
     }
 
     /**

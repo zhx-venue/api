@@ -69,4 +69,29 @@ class VenueVisitor extends BaseModel
             'token' => JWTAuth::builder($payload)
         ];
     }
+
+    /**
+     * 统计游客预约次数
+     */
+    public function getOrderCounts()
+    {
+        return VenueOrder::where(['visitor_id' => $this->id, 'status' => self::STATUS_NORMAL])->where('process', 'not in', [VenueOrder::PROCESS_CANCEL, VenueOrder::PROCESS_REVOKED])->count();
+    }
+
+    /**
+     * 统计游客履行次数
+     */
+    public function getPerformCounts()
+    {
+        // 有签到的预约
+        return VenueOrderHistory::where(['visitor_id' => $this->id, 'optype' => VenueOrderHistory::OPTYPE_SIGNING])->count();
+    }
+
+    /**
+     * 统计游客信用分
+     */
+    public function getCreditScore()
+    {
+        return 100;
+    }
 }

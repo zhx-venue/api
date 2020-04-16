@@ -87,7 +87,7 @@ CREATE TABLE `zhx_venue_school` (
   `town_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '乡镇/街道id',
   `latitude` decimal(10,6) NOT NULL DEFAULT '0.000000' COMMENT '学校地理位置经度',
   `longitude` decimal(10,6) NOT NULL DEFAULT '0.000000' COMMENT '学校地理位置纬度',
-  `config` varchar(255) NOT NULL DEFAULT '' COMMENT '配置(学校配置信息，格式:key1:value1;key2:value2;)',
+  `config` varchar(255) NOT NULL DEFAULT '' COMMENT '配置(学校配置信息，json数据)',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '状态(0:停用;1:正常;)',
   `expire_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '授权过期时间',
   `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
@@ -166,6 +166,66 @@ CREATE TABLE `zhx_venue_visitor` (
   UNIQUE KEY `UNQ_OPENID` (`openid`) USING BTREE,
   KEY `INX_MOBILE` (`mobile`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='小程序访客记录表';
+
+DROP TABLE IF EXISTS  `zhx_venue_member`;
+CREATE TABLE `zhx_venue_member` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户记录ID',
+  `school_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '学校记录ID',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '成员姓名',
+  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '成员头像',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
+  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
+  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UNQ_SCHOOLID_USERID` (`school_id`,`user_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆成员表';
+
+DROP TABLE IF EXISTS  `zhx_venue_role`;
+CREATE TABLE `zhx_venue_role` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `school_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '学校记录ID',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
+  `desc` varchar(128) NOT NULL DEFAULT '' COMMENT '描述',
+  `type` tinyint NOT NULL DEFAULT '6' COMMENT '类型(1:管理员;2:安保人员;6:自定义角色;)',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
+  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
+  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UNQ_SCHOOLID_NAME` (`school_id`, `name`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆角色表';
+
+DROP TABLE IF EXISTS  `zhx_venue_role_auth`;
+CREATE TABLE `zhx_venue_role_auth` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `rid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '角色ID',
+  `module` tinyint NOT NULL DEFAULT '0' COMMENT '模块',
+  `auth_data` tinyint NOT NULL DEFAULT '0' COMMENT '权限数据',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
+  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
+  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  PRIMARY KEY (`id`),
+  KEY `INX_RID` (`rid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆角色权限表';
+
+DROP TABLE IF EXISTS  `zhx_venue_role_member`;
+CREATE TABLE `zhx_venue_role_member` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `rid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '角色ID',
+  `mid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '成员ID',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
+  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
+  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  PRIMARY KEY (`id`),
+  KEY `IDX_MID` (`mid`) USING BTREE, 
+  UNIQUE KEY `UNQ_ROLEID_MEMID` (`rid`, `mid`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆角色成员表';
 
 DROP TABLE IF EXISTS  `zhx_venue_type`;
 CREATE TABLE `zhx_venue_type` (
@@ -250,66 +310,6 @@ CREATE TABLE `zhx_venue_image` (
   KEY `INX_VENUEID` (`venue_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆图片记录表';
 
-DROP TABLE IF EXISTS  `zhx_venue_member`;
-CREATE TABLE `zhx_venue_member` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `user_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '用户记录ID',
-  `school_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '学校记录ID',
-  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '成员姓名',
-  `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '成员头像',
-  `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
-  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
-  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
-  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
-  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UNQ_SCHOOLID_USERID` (`school_id`,`user_id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆成员表';
-
-DROP TABLE IF EXISTS  `zhx_venue_role`;
-CREATE TABLE `zhx_venue_role` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `school_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '学校记录ID',
-  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
-  `desc` varchar(128) NOT NULL DEFAULT '' COMMENT '描述',
-  `type` tinyint NOT NULL DEFAULT '6' COMMENT '类型(1:管理员;2:安保人员;6:自定义角色;)',
-  `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(-1:删除;0:禁用;1:正常;)',
-  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
-  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
-  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
-  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `UNQ_SCHOOLID_NAME` (`school_id`, `name`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆角色表';
-
-DROP TABLE IF EXISTS  `zhx_venue_role_auth`;
-CREATE TABLE `zhx_venue_role_auth` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `rid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '角色ID',
-  `module` tinyint NOT NULL DEFAULT '0' COMMENT '模块',
-  `auth_data` tinyint NOT NULL DEFAULT '0' COMMENT '权限数据',
-  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
-  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
-  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
-  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
-  PRIMARY KEY (`id`),
-  KEY `INX_RID` (`rid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆角色权限表';
-
-DROP TABLE IF EXISTS  `zhx_venue_role_member`;
-CREATE TABLE `zhx_venue_role_member` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `rid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '角色ID',
-  `mid` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '成员ID',
-  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
-  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
-  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
-  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
-  PRIMARY KEY (`id`),
-  KEY `IDX_MID` (`mid`) USING BTREE, 
-  UNIQUE KEY `UNQ_ROLEID_MEMID` (`rid`, `mid`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆角色成员表';
-
 DROP TABLE IF EXISTS  `zhx_venue_order`;
 CREATE TABLE `zhx_venue_order` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -331,5 +331,22 @@ CREATE TABLE `zhx_venue_order` (
   KEY `INX_SCHOOLID` (`school_id`) USING BTREE,
   KEY `INX_VISITORID` (`visitor_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆预约记录表';
+
+DROP TABLE IF EXISTS  `zhx_venue_order_history`;
+CREATE TABLE `zhx_venue_order_history` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `order_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '预约记录ID',
+  `visitor_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '访客记录ID',
+  `optype` tinyint NOT NULL DEFAULT '0' COMMENT '操作类型',
+  `optime` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '操作时间',
+  `position` tinyint NOT NULL DEFAULT '0' COMMENT '标志位,不同操作类型不同的标志',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
+  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
+  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  PRIMARY KEY (`id`),
+  KEY `INX_ORDERID` (`order_id`) USING BTREE,
+  KEY `INX_VISITORID` (`visitor_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆预约操作记录表';
 
 SET FOREIGN_KEY_CHECKS = 1;

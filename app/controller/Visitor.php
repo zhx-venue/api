@@ -46,6 +46,10 @@ class Visitor extends BaseController
         if (!checkAuth(VenueRole::MD_VISITOR))   return $this->jsonErr('无权限进行该操作');
 
         $query = $this->modelClass::where(['id' => $id]);
-        return json((new $this->modelClass)->getItem($query));
+        try {
+            return json((new $this->modelClass)->getItem($query));
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
     }
 }

@@ -43,13 +43,13 @@ class BaseModel extends Model
     public function getItem($query, $expand=null)
     {
         $item = $query->find();
-        if ($item) {
-            $expand = $expand ?? input('get.expand', '');
-            $expand = is_array($expand) ? $expand : array_keys(array_flip(array_filter(explode(',', strval($expand)))));
-            foreach ($expand as $_exField) {
-                $method = 'get'.ucfirst($_exField);
-                method_exists($item, $method) && $item->$_exField = $item->$method();
-            }
+        if (empty($item))   throw new \Exception('无效的记录');
+        
+        $expand = $expand ?? input('get.expand', '');
+        $expand = is_array($expand) ? $expand : array_keys(array_flip(array_filter(explode(',', strval($expand)))));
+        foreach ($expand as $_exField) {
+            $method = 'get'.ucfirst($_exField);
+            method_exists($item, $method) && $item->$_exField = $item->$method();
         }
 
         return $item;

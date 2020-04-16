@@ -65,7 +65,11 @@ class Member extends BaseController
         if (!checkAuth(VenueRole::MD_MEMBER))   return $this->jsonErr('无权限进行该操作');
 
         $query = $this->modelClass::where(['id' => $id, 'school_id' => app()->user->schoolid]);
-        return json((new $this->modelClass)->getItem($query));
+        try {
+            return json((new $this->modelClass)->getItem($query));
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
     }
 
     /**

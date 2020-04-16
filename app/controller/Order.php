@@ -26,7 +26,7 @@ class Order extends BaseController
         $query = $model->parseFilter();
         $query->where(['status' => $this->modelClass::STATUS_NORMAL]);
         if (app()->user->type == User::TYPE_VISITOR) {
-            // 访客智能查看自己的预约记录
+            // 访客只能查看自己的预约记录
             $query->where(['visitor_id' => app()->user->id]);
         } else {
             // 企业微信管理员只能查看本校的预约记录
@@ -73,8 +73,13 @@ class Order extends BaseController
     {
         if (!checkAuth(VenueRole::MD_ORDER))   return $this->jsonErr('无权限进行该操作');
 
+        $id = is_numeric($id) ? $id : ($this->modelClass)::parseUniquecode($id);
         $query = $this->modelClass::where(['id' => $id]);
-        return json((new $this->modelClass)->getItem($query));
+        try {
+            return json((new $this->modelClass)->getItem($query));
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
     }
 
     /**

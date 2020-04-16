@@ -17,3 +17,6 @@ Venue reservation
 
 # 安装微信小程序sdk
 > composer require shophy/miniprogram
+
+# 安装phpexcel
+> composer require ephpoffice/phpexcel

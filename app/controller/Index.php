@@ -31,7 +31,12 @@ class Index extends BaseController
 
     public function index()
     {
-        return json(input('get.'));
+        $hours = [];
+        $openTime = input('get.opentime', 0, 'intval');
+        for ($i = 0; $i < 24; ++$i) {
+            if (($openTime>>($i*2))&1 && ($openTime>>($i*2+1))&1)   $hours[] = $i;
+        }
+        return json($hours);
     }
 
     /**

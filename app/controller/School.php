@@ -39,4 +39,18 @@ class School extends BaseController
         $psize = input('get.psize', $this->modelClass::SIZE_PER_PAGE, 'intval');
         return json((new $this->modelClass)->listByVenue($type, $page, $psize));
     }
+
+    /**
+     * 设置学校设置信息
+     */
+    public function set_config()
+    {
+        if (!checkAuth(VenueRole::MD_SCHOOL, 1))   return $this->jsonErr('无权限进行该操作');
+
+        if (($this->modelClass)::updateConf(input('post.'))) {
+            return $this->jsonOk();
+        }
+
+        return $this->jsonErr('更新失败');
+    }
 }
