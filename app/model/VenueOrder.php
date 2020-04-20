@@ -120,18 +120,24 @@ class VenueOrder extends BaseModel
                 throw new \Exception('该预约已结束');
             }
             case self::PROCESS_CHECKING: { // 待审核
-                if ($data['process'] == self::PROCESS_CANCEL) {
-                    if (app()->user->type != User::TYPE_VISITOR) {
-                        throw new \Exception('只允许取消自己的预约记录');
+                switch ($data['process']) {
+                    case self::PROCESS_CANCEL: {
+                        if (app()->user->type != User::TYPE_VISITOR) {
+                            throw new \Exception('只允许取消自己的预约记录');
+                        }
+                        break;
                     }
-                } elseif ($data['process'] == self::PROCESS_SIGNING) {
-                    // 只有管理员有审核权限
-                    if (! (isset($userAuths) && $userAuths['pos'] & 1)) {
-                        throw new \Exception('仅允许学校管理员审核');
+                    case self::PROCESS_REFUSED:
+                    case self::PROCESS_SIGNING: {
+                        // 只有管理员有审核和拒绝权限
+                        if (! (isset($userAuths) && $userAuths['pos'] & 1)) {
+                            throw new \Exception('仅允许学校管理员审核');
+                        }
+                        break;
                     }
-                } else {
-                    throw new \Exception('该预约记录当前不支持该操作');
+                    default: { throw new \Exception('该预约记录当前不支持该操作'); }
                 }
+                
                 break;
             }
             case self::PROCESS_SIGNING: { // 待签到
