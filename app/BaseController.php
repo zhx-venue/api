@@ -60,7 +60,7 @@ abstract class BaseController
         trace($this->request->controller().'/'.$this->request->action(), 'info');
         trace('$_GET:'.json_encode($this->request->get()), 'info');
         trace('$_POST:'.json_encode($this->request->post()), 'info');
-        trace('$_HEADER:'.json_encode($this->request->header()), 'info');
+        trace('$_SERVER:'.json_encode($this->request->server()), 'info');
 
         $this->middleware = [
             // 接口鉴权
