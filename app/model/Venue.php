@@ -319,11 +319,13 @@ class Venue extends BaseModel
      */
     public function getOpentime()
     {
+        $hours = [];
         $bitCounts = 0;
         $timeRange = [];
         for ($i = 0; $i < 48; ++$i) {
             $bopen = $this->open_time & (1<<$i);
             $bopen && $bitCounts++;
+            $hours[$i] = $bopen ? 1:0;
             ($bopen && !(count($timeRange)%2)) && $timeRange[] = date('H:i', strtotime('0:0:0')+$i*1800);
             (!$bopen && (count($timeRange)%2)) && $timeRange[] = date('H:i', strtotime('0:0:0')+$i*1800);
         }
@@ -334,7 +336,7 @@ class Venue extends BaseModel
             $ranges[] = $_range[0].'~'.$_range[1];
         }
 
-        return ['counts' => round($bitCounts/2, 1), 'ranges' => $ranges];
+        return ['counts' => round($bitCounts/2, 1), 'hours' => $hours, 'ranges' => $ranges];
     }
 
     /**

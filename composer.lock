@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "526c136faaf1d3b5214d377a4e92f15e",
+    "content-hash": "686ecaadd028138e58044ffff272c0c4",
     "packages": [
         {
             "name": "ephpoffice/phpexcel",
@@ -553,6 +553,45 @@
                 "simple-cache"
             ],
             "time": "2017-10-23T01:57:42+00:00"
+        },
+        {
+            "name": "shophy/campus",
+            "version": "v0.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shophy1987/campus.git",
+                "reference": "3e43c23da0739093aa788e9363a63ebef08ad48d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shophy1987/campus/zipball/3e43c23da0739093aa788e9363a63ebef08ad48d",
+                "reference": "3e43c23da0739093aa788e9363a63ebef08ad48d",
+                "shasum": "",
+                "mirrors": [
+                    {
+                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
+                        "preferred": true
+                    }
+                ]
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "shophy\\campus\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "shophy",
+                    "email": "77288022@qq.com"
+                }
+            ],
+            "description": "campus2.0 SDK",
+            "time": "2020-04-21T15:22:40+00:00"
         },
         {
             "name": "shophy/miniprogram",

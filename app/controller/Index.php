@@ -16,6 +16,9 @@ use app\model\VenueSchoolType;
 use shophy\wxwork\structs\Agent;
 use app\miniprogram\Api as MiniApi;
 use think\exception\ValidateException;
+use shophy\campus\Campus;
+use shophy\campus\models\GetAccessTokenByCodeRequest;
+use shophy\campus\models\GetChangeListRequest;
 
 class Index extends BaseController
 {
@@ -27,6 +30,38 @@ class Index extends BaseController
         // 默认控制器
         // 此控制器主要包含测试接口，无需调用相关中间件
         $this->middleware = [];
+    }
+
+    public function login()
+    {
+        try {
+            $request = new GetAccessTokenByCodeRequest();
+            $request->deserialize(['UserCode' => input('get.code', null, 'strval')]);
+
+            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
+            $response = $campus->GetAccessTokenByCode($request);
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
+        
+        return json($response->serialize());
+    }
+
+    public function test()
+    {
+        try {
+            $request = new GetChangeListRequest();
+            $request->deserialize([
+                'Seq' => input('get.seq', null, 'strval')
+            ]);
+
+            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
+            $response = $campus->GetChangeList($request);
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
+        
+        return json($response->serialize());
     }
 
     public function index()
