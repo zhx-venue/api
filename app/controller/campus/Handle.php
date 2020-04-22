@@ -5,8 +5,6 @@ namespace app\controller\campus;
 
 use app\BaseController;
 use app\campus\DealChange;
-use shophy\campus\Campus;
-use shophy\campus\models\GetChangeListRequest;
 
 class Handle extends BaseController
 {
@@ -31,24 +29,18 @@ class Handle extends BaseController
             'Timestamp' => input('get.Timestamp', 0, 'intval'),
         ];
         $urlInfo = parse_url($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
-        $signValue = Campus::signRequestData(config('campus.secretKey') ?? '', $_SERVER['REQUEST_METHOD'], $urlInfo['host'].$urlInfo['path'], $params, '');
+        $signValue = \shophy\campus\Campus::signRequestData(config('campus.secretKey') ?? '', $_SERVER['REQUEST_METHOD'], $urlInfo['host'].$urlInfo['path'], $params, '');
         if ($Sign != $signValue)    return $this->jsonErr('invalid sign');
-
-        try {
-            $request = new GetChangeListRequest();
-            $request->deserialize(['Seq' => $params['Seq']]);
-
-            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
-            $campus->orgId = $params['OrgId'];
-            $changeList = $campus->GetChangeList($request);
-        } catch (\Exception $e) {
-            return $this->jsonErr($e->getMessage());
-        }
 
         json(['code' => 0, 'msg' => 'ok'])->send();
 
-        // 处理数据变更
-        $dealChange = new DealChange();
-        array_walk($changeList->DataList, [$dealChange, 'do']);
+        try {
+            (new DealChange())->do($params['Seq'], $params['OrgId']);
+        } catch (\Exception $e) {
+            trace('campus handle response failed！'.$e->getMessage());
+        }
+        
+        // 写入日志
+        app()->log->save();
     }
 }

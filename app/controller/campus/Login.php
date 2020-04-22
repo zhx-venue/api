@@ -4,14 +4,15 @@ declare(strict_types=1);
 namespace app\controller\campus;
 
 use app\BaseController;
-use shophy\campus\Campus;
-use shophy\campus\models\GetAccessTokenByCodeRequest;
 use app\model\User;
 use app\model\VenueUser;
 use app\model\VenueMember;
 use app\model\VenueSchool;
 use app\model\VenueRole;
 use app\model\VenueRoleMember;
+use shophy\campus\Campus;
+use shophy\campus\models\GetOrgAdminsRequest;
+use shophy\campus\models\GetAccessTokenByCodeRequest;
 
 class Login extends BaseController
 {
@@ -65,6 +66,7 @@ class Login extends BaseController
                 $membInfo->school_id = $schoolInfo->id;
                 $membInfo->user_id = $userInfo->id;
                 $membInfo->name = $userInfo->name;
+                isset($response->Session->ExtData->Avatar) && $membInfo->avatar = $response->Session->ExtData->Avatar;
                 $membInfo->save();
 
                 // 将管理员添加到管理角色中
