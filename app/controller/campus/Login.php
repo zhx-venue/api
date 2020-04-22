@@ -4,6 +4,8 @@ declare(strict_types=1);
 namespace app\controller\campus;
 
 use app\BaseController;
+use shophy\campus\Campus;
+use shophy\campus\models\GetAccessTokenByCodeRequest;
 use app\model\User;
 use app\model\VenueUser;
 use app\model\VenueMember;
@@ -35,10 +37,62 @@ class Login extends BaseController
 
             $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
             $response = $campus->GetAccessTokenByCode($request);
+
+            $schoolInfo = VenueSchool::where('orgid', $response->Session->OrgId)->find();
+            if (empty($schoolInfo)) return $this->jsonErr('无机构信息，请联系管理员重新安装');
+
+            $userInfo = VenueUser::where(['openuserid' => $response->Session->OpenUserId])->find();
+            $membInfo = empty($userInfo) ? null : VenueMember::where(['school_id' => $schoolInfo->id, 'user_id' => $userInfo->id])->find();
+            if (empty($userInfo) || empty($membInfo) || $membInfo->status != 1) {
+                $isAdmin = false;
+                $campus->orgId = $response->Session->OrgId;
+                $orgAdmins = $campus->GetOrgAdmins(new GetOrgAdminsRequest());
+                foreach ($orgAdmins->DataList as $_admin) {
+                    if ($_admin->OpenUserId == $response->Session->OpenUserId) {
+                        $isAdmin = true;
+                        break;
+                    }
+                }
+                if (!$isAdmin)  return $this->jsonErr('您尚未在系统中，请联系管理员添加到系统');
+
+                empty($userInfo) && $userInfo = new VenueUser();
+                $userInfo->name = $response->Session->UserName;
+                $userInfo->openuserid = $response->Session->OpenUserId;
+                isset($response->Session->ExtData->Avatar) && $userInfo->avatar = $response->Session->ExtData->Avatar;
+                $userInfo->save();
+
+                empty($membInfo) && $membInfo = new VenueMember();
+                $membInfo->school_id = $schoolInfo->id;
+                $membInfo->user_id = $userInfo->id;
+                $membInfo->name = $userInfo->name;
+                $membInfo->save();
+
+                // 将管理员添加到管理角色中
+                $managerRole = VenueRole::where(['school_id' => $schoolInfo->id, 'type' => VenueRole::TYPE_MANAGER])->find();
+                $managerRole && VenueRoleMember::create(['rid' => $managerRole->id, 'mid' => $membInfo->id], [], true);
+                
+                unset($userInfo);
+                $userInfo = VenueUser::where(['openuserid' => $response->Session->OpenUserId])->find();
+                if (empty($userInfo))   return $this->jsonErr('用户信息获取失败');
+            }
         } catch (\Exception $e) {
-            return $this->jsonErr($e->getMessage());
+            return $this->jsonErr('授权失败！'.$e->getMessage());
         }
-        
-        return json($response->serialize());
+
+        // 生成授权信息
+        $userToken = User::generateToken($userInfo, $schoolInfo->id);
+
+        // 输出学校信息
+        $userToken['school'] = [
+            'id' => $schoolInfo->id, 
+            'name' => $schoolInfo->title
+        ];
+        // 读取在学校的身份
+        $userToken['school']['member'] = VenueMember::where(['school_id' => $schoolInfo->id, 'user_id' => $userInfo->id])->find();
+
+        // 获取用户权限信息
+        $userToken['auths'] = VenueRole::getUserAuth($userInfo->id, $schoolInfo->id);
+
+        return $this->jsonOk($userToken);
     }
 }

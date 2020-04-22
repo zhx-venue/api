@@ -80,6 +80,7 @@ CREATE TABLE `zhx_venue_school` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `title` varchar(32) NOT NULL DEFAULT '' COMMENT '学校名称',
   `appid` varchar(32) DEFAULT NULL COMMENT '授权公众号appid',
+  `orgid` varchar(32) DEFAULT NULL COMMENT '授权智慧校园OrgId',
   `corpid` varchar(32) DEFAULT NULL COMMENT '授权企业微信corpid',
   `province_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '省级id',
   `city_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '市级id',
@@ -96,6 +97,7 @@ CREATE TABLE `zhx_venue_school` (
   `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNQ_APPID` (`appid`) USING BTREE,
+  UNIQUE KEY `UNQ_ORGID` (`orgid`) USING BTREE,
   UNIQUE KEY `UNQ_CORPID` (`corpid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆学校记录表';
 
@@ -109,6 +111,7 @@ CREATE TABLE `zhx_venue_user` (
   `corpid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信corpid',
   `userid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信userid',
   `openid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信openid',
+  `openuserid` varchar(32) NOT NULL DEFAULT '' COMMENT '智慧校园用户唯一id',
   `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
   `gender` tinyint(4) NOT NULL DEFAULT '0' COMMENT '性别(0:未设置;1:男;2:女;)',
   `birthday` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '生日',

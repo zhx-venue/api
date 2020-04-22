@@ -33,7 +33,7 @@ class Provider extends BaseController
         $authCode = input('get.auth_code');
         if(empty($authCode))    return;
         try {
-            redirect(config('wxwork.front_domain') ?? '/index/installed'.'?auth_code='.$authCode)->send();
+            redirect((config('wxwork.front_domain') ?? '/index/installed').'?auth_code='.$authCode)->send();
             //return json((new ServiceProvider())->GetLoginInfo($authCode));
         } catch (\Exception $e) {
             return $e->getMessage();

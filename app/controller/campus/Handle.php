@@ -29,7 +29,7 @@ class Handle extends BaseController
             'Timestamp' => input('get.Timestamp', 0, 'intval'),
         ];
         $urlInfo = parse_url($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI']);
-        $signValue = Campus::signRequestData(config('campus.secretKey') ?? '', $_SERVER['REQUEST_METHOD'], $urlInfo['scheme'].'://'.$urlInfo['host'].$urlInfo['path'], $params, '');
+        $signValue = Campus::signRequestData(config('campus.secretKey') ?? '', $_SERVER['REQUEST_METHOD'], $urlInfo['host'].$urlInfo['path'], $params, '');
         if ($Sign != $signValue)    return $this->jsonErr('invalid sign');
 
         return $this->jsonOk();
