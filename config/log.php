@@ -38,6 +38,8 @@ return [
             'format'         => '[%s][%s] %s',
             // 是否实时写入
             'realtime_write' => false,
+            // 日志文件大小
+            'file_size' => 52428800,
         ],
         // 其它日志通道配置
     ],

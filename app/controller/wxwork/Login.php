@@ -222,7 +222,7 @@ class Login extends BaseController
         return $userInfo;
     }
 
-    private function _getUserByCipherText($cipher_text, VenueSchool &$schoolInfo=null)
+    private function _getUserByCipherText($cipherText, VenueSchool &$schoolInfo=null)
     {
         if (empty($cipherText)) return $this->jsonErr('cipher_text不能为空');
 
