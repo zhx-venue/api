@@ -108,10 +108,10 @@ CREATE TABLE `zhx_venue_user` (
   `nickname` varchar(32) NOT NULL DEFAULT '' COMMENT '昵称',
   `email` varchar(128) DEFAULT NULL COMMENT '用户邮箱',
   `mobile` varchar(16) DEFAULT NULL COMMENT '用户手机',
+  `openuserid` varchar(32) DEFAULT NULL COMMENT '智慧校园用户唯一id',
   `corpid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信corpid',
   `userid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信userid',
   `openid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信openid',
-  `openuserid` varchar(32) NOT NULL DEFAULT '' COMMENT '智慧校园用户唯一id',
   `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
   `gender` tinyint(4) NOT NULL DEFAULT '0' COMMENT '性别(0:未设置;1:男;2:女;)',
   `birthday` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '生日',
@@ -132,6 +132,7 @@ CREATE TABLE `zhx_venue_user` (
   `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新用户id',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `UNQ_OPENUSERID` (`openuserid`) USING BTREE,
   UNIQUE KEY `UNQ_CORPID_USERID` (`corpid`,`userid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
 

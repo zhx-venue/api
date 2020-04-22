@@ -4,7 +4,9 @@ declare(strict_types=1);
 namespace app\controller\campus;
 
 use app\BaseController;
+use app\campus\DealChange;
 use shophy\campus\Campus;
+use shophy\campus\models\GetChangeListRequest;
 
 class Handle extends BaseController
 {
@@ -32,6 +34,21 @@ class Handle extends BaseController
         $signValue = Campus::signRequestData(config('campus.secretKey') ?? '', $_SERVER['REQUEST_METHOD'], $urlInfo['host'].$urlInfo['path'], $params, '');
         if ($Sign != $signValue)    return $this->jsonErr('invalid sign');
 
-        return $this->jsonOk();
+        try {
+            $request = new GetChangeListRequest();
+            $request->deserialize(['Seq' => $params['Seq']]);
+
+            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
+            $campus->orgId = $params['OrgId'];
+            $changeList = $campus->GetChangeList($request);
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
+
+        json(['code' => 0, 'msg' => 'ok'])->send();
+
+        // 处理数据变更
+        $dealChange = new DealChange();
+        array_walk($changeList->DataList, [$dealChange, 'do']);
     }
 }
