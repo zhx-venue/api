@@ -18,7 +18,7 @@ use app\miniprogram\Api as MiniApi;
 use think\exception\ValidateException;
 use shophy\campus\Campus;
 use shophy\campus\models\GetAccessTokenByCodeRequest;
-use shophy\campus\models\GetChangeListRequest;
+use shophy\campus\models\GetOrgAdminsRequest;
 
 class Index extends BaseController
 {
@@ -50,13 +50,14 @@ class Index extends BaseController
     public function test()
     {
         try {
-            $request = new GetChangeListRequest();
-            $request->deserialize([
-                'Seq' => input('get.seq', null, 'strval')
-            ]);
+            $request = new GetOrgAdminsRequest();
+            // $request->deserialize([
+            //     'Seq' => input('get.seq', null, 'strval')
+            // ]);
 
             $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
-            $response = $campus->GetChangeList($request);
+            $campus->orgId = input('get.orgid', 0, 'intval');
+            $response = $campus->GetOrgAdmins($request);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());
         }

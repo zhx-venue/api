@@ -18,4 +18,7 @@ return [
     'suite_secret' => env('WXWORK_SUITE_SECRET', 'xxxx'),
     'suite_token' => env('WXWORK_SUITE_TOKEN', 'xxxxx'),
     'suite_encoding_aes_key' => env('WXWORK_SUITE_ENCODING_AES_KEY', 'xxxxxx'),
+
+    // 前端域名
+    'front_domain' => env('WXWORK_FRONT_DOMAIN', 'http://venue.com'),
 ];
