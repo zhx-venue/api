@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "686ecaadd028138e58044ffff272c0c4",
+    "content-hash": "bb47b546bdbb0661498d4809b6118cd3",
     "packages": [
         {
             "name": "ephpoffice/phpexcel",
@@ -556,16 +556,16 @@
         },
         {
             "name": "shophy/campus",
-            "version": "v0.0.3",
+            "version": "v0.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shophy1987/campus.git",
-                "reference": "3e43c23da0739093aa788e9363a63ebef08ad48d"
+                "reference": "cfc3ffba9f7798db808bf293d130fac8ddfd14b4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shophy1987/campus/zipball/3e43c23da0739093aa788e9363a63ebef08ad48d",
-                "reference": "3e43c23da0739093aa788e9363a63ebef08ad48d",
+                "url": "https://api.github.com/repos/shophy1987/campus/zipball/cfc3ffba9f7798db808bf293d130fac8ddfd14b4",
+                "reference": "cfc3ffba9f7798db808bf293d130fac8ddfd14b4",
                 "shasum": "",
                 "mirrors": [
                     {
@@ -591,7 +591,7 @@
                 }
             ],
             "description": "campus2.0 SDK",
-            "time": "2020-04-21T15:22:40+00:00"
+            "time": "2020-04-23T04:56:04+00:00"
         },
         {
             "name": "shophy/miniprogram",

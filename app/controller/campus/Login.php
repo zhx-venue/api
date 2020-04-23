@@ -10,6 +10,7 @@ use app\model\VenueMember;
 use app\model\VenueSchool;
 use app\model\VenueRole;
 use app\model\VenueRoleMember;
+use app\campus\AccessToken;
 use shophy\campus\Campus;
 use shophy\campus\models\GetOrgAdminsRequest;
 use shophy\campus\models\GetAccessTokenByCodeRequest;
@@ -86,6 +87,7 @@ class Login extends BaseController
             'orgid' => $response->Session->OrgId,
             'orgRoleId' => $response->Session->RoleId,
             'orgUserid' => $response->Session->OrgUserId,
+            'tokenCacheKey' => AccessToken::cache($response->AccessToken, $response->ExpireIn),
             'schoolid' => $schoolInfo->id
         ]);
 

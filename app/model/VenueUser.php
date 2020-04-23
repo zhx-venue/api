@@ -44,7 +44,7 @@ class VenueUser extends BaseModel
         ], empty($this->openuserid) ? ['corpid' => $this->corpid, 'userid' => $this->userid] : ['openuserid' => $this->openuserid]);
         return [
             'info' => $info,
-            'token' => JWTAuth::builder(array_merge($base, ['type' => User::TYPE_USER], $tokenData))
+            'token' => JWTAuth::builder(array_merge($info, ['type' => User::TYPE_USER], $tokenData))
         ];
     }
 }
