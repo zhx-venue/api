@@ -82,7 +82,12 @@ class Login extends BaseController
         }
 
         // 生成授权信息
-        $userToken = User::generateToken($userInfo, $schoolInfo->id);
+        $userToken = User::generateToken($userInfo, [
+            'orgid' => $response->Session->OrgId,
+            'orgRoleId' => $response->Session->RoleId,
+            'orgUserid' => $response->Session->OrgUserId,
+            'schoolid' => $schoolInfo->id
+        ]);
 
         // 输出学校信息
         $userToken['school'] = [

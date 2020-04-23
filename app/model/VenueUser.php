@@ -15,7 +15,7 @@ class VenueUser extends BaseModel
     const TYPE_ADMIN = 0;
     const TYPE_CUSTOMER = 1;
 
-    public function generateToken($schoolId=null)
+    public function generateToken($tokenData=[])
     {
         $ip = ip2long(app()->request->ip());
         $now = time();
@@ -37,24 +37,14 @@ class VenueUser extends BaseModel
             'ban_expire' => 0/* 登录成功则自动解禁 */
         ], ['id' => $this->id]);
 
-        $payload = [
+        $info = array_merge([
             'id' => $this->id, 
-            'type' => User::TYPE_USER, 
             'name' => $this->getAttr('name'),
-            'corpid' => $this->corpid, 
-            'userid' => $this->userid,
             'avatar' => $this->avatar,
-            'schoolid' => $schoolId
-        ];
+        ], empty($this->openuserid) ? ['corpid' => $this->corpid, 'userid' => $this->userid] : ['openuserid' => $this->openuserid]);
         return [
-            'info' => [
-                'id' => $this->id,
-                'name' => $this->getAttr('name'),
-                'corpid' => $this->corpid, 
-                'userid' => $this->userid,
-                'avatar' => $this->avatar
-            ],
-            'token' => JWTAuth::builder($payload)
+            'info' => $info,
+            'token' => JWTAuth::builder(array_merge($base, ['type' => User::TYPE_USER], $tokenData))
         ];
     }
 }

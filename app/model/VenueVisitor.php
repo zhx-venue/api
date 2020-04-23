@@ -48,16 +48,16 @@ class VenueVisitor extends BaseModel
             ->select();
     }
 
-    public function generateToken($schoolId=null)
+    public function generateToken($tokenData=[])
     {
-        $payload = [
+        $payload = array_merge([
             'id' => $this->id, 
             'type' => User::TYPE_VISITOR, 
             'name' => $this->getAttr('name'),
             'openid' => $this->openid, 
             'avatar' => $this->avatar,
             'gender' => $this->gender
-        ];
+        ], $tokenData);
 
         return [
             'info' => [

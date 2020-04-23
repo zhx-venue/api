@@ -32,11 +32,12 @@ class User
 
     /**
      * 生成口令
+     * @param array $tokenData 其余需要存储到token的数据
      */
-    public static function generateToken($user, $schoolId=null)
+    public static function generateToken($user, $tokenData=[])
     {
         if (method_exists($user, 'generateToken')) {
-            return $user->generateToken($schoolId);
+            return $user->generateToken($tokenData);
         }
 
         throw new \Exception('user instance invalid');

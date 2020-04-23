@@ -36,7 +36,7 @@ class Login extends BaseController
         if (empty($schoolInfo)) return $this->jsonErr('企业号未正确安装德育管理应用，请联系管理员重新安装');
         
         // 生成授权信息
-        $userToken = User::generateToken($userInfo, $schoolInfo->id);
+        $userToken = User::generateToken($userInfo, ['schoolid' => $schoolInfo->id]);
 
         // 输出学校信息
         $userToken['school'] = [
@@ -71,7 +71,7 @@ class Login extends BaseController
         }
 
         // 生成授权信息
-        $userToken = User::generateToken($userInfo, $schoolInfo->id);
+        $userToken = User::generateToken($userInfo, ['schoolid' => $schoolInfo->id]);
 
         // 输出学校信息
         $userToken['school'] = [
