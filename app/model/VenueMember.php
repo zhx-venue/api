@@ -107,16 +107,16 @@ class VenueMember extends BaseModel
      */
     public function addItem($data)
     {
+        // 校验角色是否有效
+        $roles = VenueRole::where(['id' => $data['role'], 'school_id' => app()->user->schoolid, 'status' => VenueRole::STATUS_NORMAL])->select();
+        if ($roles->isEmpty())  throw new \Exception('无效的角色');
+
         $corpid = app()->user->corpid;
         if ($corpid) {
             $this->_memberWork($data['member'], $roleUsers);
         } else {
             $this->_memberCampus($data['member'], $roleUsers);
         }
-
-        // 校验角色是否有效
-        $roles = VenueRole::where(['id' => $data['role'], 'school_id' => app()->user->schoolid, 'status' => VenueRole::STATUS_NORMAL])->select();
-        if ($roles->isEmpty())  throw new \Exception('无效的角色');
 
         Db::startTrans();
         try {

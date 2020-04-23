@@ -10,6 +10,7 @@ use app\model\VenueMember;
 use app\model\VenueSchool;
 use app\model\VenueRole;
 use app\model\VenueRoleMember;
+use app\campus\DealChange;
 use app\campus\AccessToken;
 use shophy\campus\Campus;
 use shophy\campus\models\GetOrgAdminsRequest;
@@ -40,8 +41,13 @@ class Login extends BaseController
             $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
             $response = $campus->GetAccessTokenByCode($request);
 
+            // 学校主体不存在则创建
             $schoolInfo = VenueSchool::where('orgid', $response->Session->OrgId)->find();
-            if (empty($schoolInfo)) return $this->jsonErr('无机构信息，请联系管理员重新安装');
+            if (empty($schoolInfo)) {
+                (new DealChange)->changeAuth($response->Session->OrgId, '');
+                $schoolInfo = VenueSchool::where('orgid', $response->Session->OrgId)->find();
+                if (empty($schoolInfo)) return $this->jsonErr('无机构信息，请联系管理员重新安装');
+            }
 
             $userInfo = VenueUser::where(['openuserid' => $response->Session->OpenUserId])->find();
             $membInfo = empty($userInfo) ? null : VenueMember::where(['school_id' => $schoolInfo->id, 'user_id' => $userInfo->id])->find();
