@@ -11,8 +11,9 @@ class Architecture extends BaseController
 {
     public function all()
     {
+        $departType = input('get.departmentType', 2, 'intval');
         $architecture = [];
-        Contacts::getArchitecture(app()->user->orgid, $architecture);
+        Contacts::getArchitecture($architecture, $departType);
 
         return json(Tree::makeTree($architecture, 'DepartmentId', 'ParentId'));
     }
@@ -20,7 +21,8 @@ class Architecture extends BaseController
     public function departments()
     {
         $daparts = [];
-        Contacts::getDepartments(app()->user->orgid, $daparts);
+        $departType = input('get.departmentType', null, 'intval');
+        Contacts::getDepartments($daparts, $departType);
 
         return json(Tree::makeTree($daparts, 'DepartmentId', 'ParentId'));
     }
@@ -29,7 +31,7 @@ class Architecture extends BaseController
     {
         $users = [];
         $departmentId = input('get.departmentId', 0, 'intval');
-        Contacts::getDepartUsers(app()->user->orgid, $departmentId, $users);
+        Contacts::getDepartUsers($departmentId, $users);
 
         return json($users);
     }

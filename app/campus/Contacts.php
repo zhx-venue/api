@@ -4,6 +4,7 @@ namespace app\campus;
 
 use shophy\campus\Campus;
 use shophy\campus\models\GetDptUsersRequest;
+use shophy\campus\models\GetUsersInfoRequest;
 use shophy\campus\models\GetDepartmentListRequest;
 
 /**
@@ -17,19 +18,19 @@ class Contacts
      * @param $departType 架构类型
      * 全部:0,学生:1,教职工:2,校友:4,退休教师:5,临时组:6,虚拟组:7,课程班:8,上级单位:9,教学班（高校）:10
      */
-    public static function getDepartments($orgId, &$daparts, $departType=0)
+    public static function getDepartments(&$daparts, $departType=null, $orgId=null)
     {
         $daparts = [];
         $pageSize = 64;
         $pageIndex = 1;
         
         try {
-            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '', $orgId);
+            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '', $orgId ?? app()->user->orgid);
             $request = new GetDepartmentListRequest();
             
             do {
                 $request->deserialize([
-                    'DepartmentType' => $departType,
+                    'DepartmentType' => $departType ?? 0,
                     'PageIndex' => $pageIndex,
                     'PageSize' => $pageSize
                 ]);
@@ -48,14 +49,14 @@ class Contacts
      * @param $orgId 机构id
      * @param $departmentId 组织架构Id
      */
-    public static function getDepartUsers($orgId, $departmentId, &$users)
+    public static function getDepartUsers($departmentId, &$users, $orgId=null)
     {
         $users = [];
         $pageSize = 64;
         $pageIndex = 1;
 
         try {
-            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '', $orgId);
+            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '', $orgId ?? app()->user->orgid);
             $request = new GetDptUsersRequest();
 
             do {
@@ -77,46 +78,43 @@ class Contacts
     /**
      * 读取组织架构
      */
-    public static function getArchitecture($orgId, &$architecture, $departType=null)
+    public static function getArchitecture(&$architecture, $departType=null, $orgId=null)
     {
         $architecture = [];
-        self::getDepartments($orgId, $architecture);
+        self::getDepartments($architecture, null, $orgId); // 接口有问题，读取指定类型部门返回空数据
         foreach ($architecture as $key => $value) {
             $architecture[$key]['members'] = [];
-            (is_null($departType) || $value['DepartmentType'] == $departType) && self::getDepartUsers($orgId, $value['DepartmentId'], $architecture[$key]['members']);
+            (is_null($departType) || $departType == 0 || $value['DepartmentType'] == $departType) && self::getDepartUsers($value['DepartmentId'], $architecture[$key]['members'], $orgId);
         }
     }
 
     /**
      * 检测用户是否在应用范围
+     * @param array $userIds 这里是orgUserid
      */
-    public static function authFocus($userIds, $corpid='') 
+    public static function authFocus($userIds, $orgId=null) 
     {
         $users = ['focus' => [], 'unfocus' => [], 'outrange' => [], 'nonexist' => []];
+        try {
+            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '', $orgId ?? app()->user->orgid);
+            $request = new GetUsersInfoRequest();
 
-        empty($corpid) && $corpid = app()->user->corpid;
-        if (empty($corpid)) return $users;
-        
-        $corpAPI = OAuth::getCorpInstance($corpid);
-        if($corpAPI) {
-            foreach($userIds as $_userid) {
-                try {
-                    $userInfo = $corpAPI->UserGet($_userid);
-                    if(isset($userInfo->status) && $userInfo->status === 1) {
-                        $users['focus'][] = $_userid;
-                    } else {
-                        $users['unfocus'][] = $_userid;
-                    }
-                } catch (\Exception $e) {
-                    $errmsg = $e->getMessage();
-                    $msg = json_decode(substr($e->getMessage(), 15), true);
-                    if(strpos($errmsg,'60111'))
-                    $msg['errcode'] == 60111 && $users['nonexist'][] = $_userid;
-                    $msg['errcode'] == 60011 && $users['outrange'][] = $_userid;
+            array_walk($userIds, function(&$v, $k) { $v = strval($v); });
+            $userIds = array_chunk($userIds, 100);
+            foreach ($userIds as $_userIds) {
+                $request->deserialize(['OrgUserId' => $_userIds]);
+                $response = $campus->GetUsersInfo($request);
+
+                $oriUsers = array_flip($_userIds);
+                foreach ($response->DataList as $_user) {
+                    $users['focus'][] = $_user->OrgUserId;
+                    unset($oriUsers[$_user->OrgUserId]);
                 }
+
+                $users['nonexist'] = array_merge($users['nonexist'], array_keys($oriUsers));
             }
-        } else {
-            $users['nonexist'] = $userIds;
+        } catch (\Exception $e) {
+            trace('[campus authFocus] - '.$e->getMessage(), 'error');
         }
 
         return $users;

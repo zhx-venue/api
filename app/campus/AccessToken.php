@@ -2,6 +2,7 @@
 
 namespace app\campus;
 
+use think\facade\Cache;
 use shophy\campus\Campus;
 use shophy\campus\models\RefreshAccessTokenRequest;
 
@@ -20,12 +21,13 @@ class AccessToken
     public static function cache($accesstoken, $expire)
     {
         $key = uniqid();
+        $expire = intval($expire);
         $data = [
-            'expire' => intval($expire),
+            'expire' => time() + $expire,
             'token' => strval($accesstoken),
         ];
 
-        Cache::set($key, json_encode($data), $data['expire']);
+        Cache::set($key, json_encode($data), $expire);
         return $key;
     }
 
@@ -38,7 +40,9 @@ class AccessToken
         $data = Cache::get($cachekey, null);
         if (empty($data))   return false;
 
-        if ($data['expire'] < self::REFRESH_TIME) {
+        $data = json_decode($data, true);
+        if ($data === false)    return false;
+        if ($data['expire'] < (time() + self::REFRESH_TIME)) {
             try {
                 $request = new RefreshAccessTokenRequest();
                 $request->deserialize(['CurrentAccessToken' => $data['token']]);
@@ -49,6 +53,11 @@ class AccessToken
                 trace('[check accesstoken] - '.$e->getMessage(), 'error');
                 return false;
             }
+
+            Cache::set($cachekey, json_encode([
+                'expire' => time() + $response->ExpireIn,
+                'token' => strval($response->AccessToken),
+            ]), $response->ExpireIn);
         }
 
         return true;
