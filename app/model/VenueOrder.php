@@ -112,65 +112,96 @@ class VenueOrder extends BaseModel
             if (!($userAuths['pos'] & 3))   throw new \Exception('无权限更新该记录');
         }
 
-        switch (intval($orderInfo->process)) {
-            case self::PROCESS_CANCEL: // 已取消
-            case self::PROCESS_REVOKED: // 已退订
-            case self::PROCESS_REFUSED: // 已拒绝
-            case self::PROCESS_SIGNOUTED: { //已签退
-                throw new \Exception('该预约已结束');
-            }
-            case self::PROCESS_CHECKING: { // 待审核
-                switch ($data['process']) {
-                    case self::PROCESS_CANCEL: {
+        if (isset($data['process'])) {
+            $now = time();
+            $orederTime = parse_ordertime($orderInfo->odate, $orderInfo->open_time);
+            if ($now > $orderTime[1])   throw new \Exception('该预约已过期');
+
+            switch (intval($orderInfo->process)) {
+                case self::PROCESS_CANCEL: // 已取消
+                case self::PROCESS_REVOKED: // 已退订
+                case self::PROCESS_REFUSED: // 已拒绝
+                case self::PROCESS_SIGNOUTED: { // 已签退
+                    throw new \Exception('该预约已结束');
+                }
+                case self::PROCESS_CHECKING: { // 待审核
+                    switch ($data['process']) {
+                        case self::PROCESS_CANCEL: {
+                            $operateType = VenueOrderHistory::OPTYPE_CANCEL;
+                            if (app()->user->type != User::TYPE_VISITOR) {
+                                throw new \Exception('只允许取消自己的预约记录');
+                            }
+                            break;
+                        }
+                        case self::PROCESS_REFUSED:
+                        case self::PROCESS_SIGNING: {
+                            $operateType = $data['process'] == self::PROCESS_REFUSED ? VenueOrderHistory::OPTYPE_REFUSED : VenueOrderHistory::OPTYPE_SIGNING;
+                            // 只有管理员有审核和拒绝权限
+                            if (! (isset($userAuths) && $userAuths['pos'] & 1)) {
+                                throw new \Exception('仅允许学校管理员审核');
+                            }
+                            break;
+                        }
+                        default: { throw new \Exception('该预约记录当前不支持该操作'); }
+                    }
+                    
+                    break;
+                }
+                case self::PROCESS_SIGNING: { // 待签到
+                    if ($data['process'] == self::PROCESS_REVOKED) {
+                        $operateType = VenueOrderHistory::OPTYPE_REVOKED;
                         if (app()->user->type != User::TYPE_VISITOR) {
-                            throw new \Exception('只允许取消自己的预约记录');
+                            throw new \Exception('只允许退订自己的预约记录');
                         }
-                        break;
-                    }
-                    case self::PROCESS_REFUSED:
-                    case self::PROCESS_SIGNING: {
-                        // 只有管理员有审核和拒绝权限
-                        if (! (isset($userAuths) && $userAuths['pos'] & 1)) {
-                            throw new \Exception('仅允许学校管理员审核');
+                    } elseif ($data['process'] == self::PROCESS_SIGNOUTING) {
+                        // 只有管理员和安保人员有同意签到入场权限
+                        $operateType = VenueOrderHistory::OPTYPE_SIGNING;
+                        if (! (isset($userAuths) && $userAuths['pos'] & 3)) {
+                            throw new \Exception('仅允许学校管理员和安保人员签到');
                         }
-                        break;
+                    } else {
+                        throw new \Exception('该预约记录当前不支持该操作');
                     }
-                    default: { throw new \Exception('该预约记录当前不支持该操作'); }
+                    break;
                 }
-                
-                break;
-            }
-            case self::PROCESS_SIGNING: { // 待签到
-                if ($data['process'] == self::PROCESS_REVOKED) {
-                    if (app()->user->type != User::TYPE_VISITOR) {
-                        throw new \Exception('只允许退订自己的预约记录');
+                case self::PROCESS_SIGNOUTING: { // 待签退
+                    if ($data['process'] == self::PROCESS_SIGNOUTED) {
+                        // 只有管理员和安保人员有同意签退离场权限
+                        $operateType = VenueOrderHistory::OPTYPE_SIGNOUTING;
+                        if (! (isset($userAuths) && $userAuths['pos'] & 3)) {
+                            throw new \Exception('仅允许学校管理员和安保人员签退');
+                        }
+                    } else {
+                        throw new \Exception('该预约记录当前不支持该操作');
                     }
-                } elseif ($data['process'] == self::PROCESS_SIGNOUTING) {
-                    // 只有管理员和安保人员有同意签到入场权限
-                    if (! (isset($userAuths) && $userAuths['pos'] & 3)) {
-                        throw new \Exception('仅允许学校管理员和安保人员签到');
-                    }
-                } else {
-                    throw new \Exception('该预约记录当前不支持该操作');
+                    break;
                 }
-                break;
             }
-            case self::PROCESS_SIGNOUTING: { // 待签退
-                if ($data['process'] == self::PROCESS_SIGNOUTED) {
-                    // 只有管理员和安保人员有同意签退离场权限
-                    if (! (isset($userAuths) && $userAuths['pos'] & 3)) {
-                        throw new \Exception('仅允许学校管理员和安保人员签退');
-                    }
-                } else {
-                    throw new \Exception('该预约记录当前不支持该操作');
-                }
-                break;
-            }
+
+            $orderInfo->process = $data['process'];
         }
 
-        $orderInfo->process = $data['process'];
         $orderInfo->updated_by = app()->user->id;
         if (!($orderInfo->save()))   throw new \Exception('更新失败');
+
+        // 添加预约记录操作记录
+        if (isset($operateType)) {
+            $position = 0;
+            switch ($operateType) {
+                case VenueOrderHistory::OPTYPE_SIGNING: { $orederTime[0] < $now && $position |= 1; }
+                case VenueOrderHistory::OPTYPE_SIGNOUTING: { $orederTime[1] > $now && $position |= 1; }
+            }
+
+            VenueOrderHistory::create([
+                'order_id' => $orderInfo->id, 
+                'visitor_id' => $orderInfo->visitor_id, 
+                'optype' => $operateType, 
+                'optime' => $now, 
+                'position' => $position, 
+                'created_by' => app()->user->id, 
+                'updated_by' => app()->user->id, 
+            ]);
+        }
     }
 
     public function getFacility()

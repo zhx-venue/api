@@ -84,7 +84,7 @@ class Contacts
         self::getDepartments($architecture, null, $orgId); // 接口有问题，读取指定类型部门返回空数据
         foreach ($architecture as $key => $value) {
             $architecture[$key]['members'] = [];
-            (is_null($departType) || $departType == 0 || $value['DepartmentType'] == $departType) && self::getDepartUsers($value['DepartmentId'], $architecture[$key]['members'], $orgId);
+            $value['UsersTotal'] > 0 && (is_null($departType) || $departType == 0 || $value['DepartmentType'] == $departType) && self::getDepartUsers($value['DepartmentId'], $architecture[$key]['members'], $orgId);
         }
     }
 

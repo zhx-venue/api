@@ -171,6 +171,21 @@ CREATE TABLE `zhx_venue_visitor` (
   KEY `INX_MOBILE` (`mobile`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='小程序访客记录表';
 
+DROP TABLE IF EXISTS  `zhx_venue_visitor_ban`;
+CREATE TABLE `zhx_venue_visitor_ban` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `school_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '学校记录ID',
+  `visitor_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '访客记录ID',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(0:禁用;1:正常;)',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
+  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
+  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  PRIMARY KEY (`id`),
+  KEY `INX_SCHOOLID` (`school_id`) USING BTREE,
+  KEY `INX_VISITORID` (`visitor_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='小程序访客禁用记录表';
+
 DROP TABLE IF EXISTS  `zhx_venue_member`;
 CREATE TABLE `zhx_venue_member` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',

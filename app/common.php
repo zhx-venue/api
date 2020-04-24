@@ -25,6 +25,24 @@ function checkAuth($module, $position=null)
 }
 
 /**
+ * 解析预约的时间
+ * @param $datetime 预约的日期
+ * @param $opentime 预约的时间
+ * @return array [$stime, $etime]
+ */
+function parse_ordertime($datetime, $opentime)
+{
+    $stime = $etime = 0;
+    for ($i = 0; $i < 48; ++$i) {
+        $bopen = $opentime & (1<<$i);
+        $bopen && $stime <= 0 && $stime = $datetime+$i*1800;
+        !$bopen && $stime > 0 && $etime <= 0 && $etime = $datetime+$i*1800;
+    }
+
+    return [$stime, $etime];
+}
+
+/**
  * 格式化开放时间
  * @param $opentime 开放时间
  * @param $date 开放时间所在的日期 时间戳

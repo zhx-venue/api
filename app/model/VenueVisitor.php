@@ -71,6 +71,18 @@ class VenueVisitor extends BaseModel
     }
 
     /**
+     * 读取访客在学校的状态
+     */
+    public function getBanStatus()
+    {
+        if (app()->user->type == User::TYPE_USER) {
+            $banInfo = VenueVisitorBan::where(['school_id' => app()->user->schoolid, 'visitor_id' => $this->id])->order('created_at', 'desc')->find();
+        }
+
+        return isset($banInfo) ? $banInfo->status : 1;
+    }
+
+    /**
      * 统计游客预约次数
      */
     public function getOrderCounts()
