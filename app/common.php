@@ -23,3 +23,41 @@ function checkAuth($module, $position=null)
 
     return VenueRole::checkAuth($module, $position, $auths);
 }
+
+/**
+ * 格式化开放时间
+ * @param $opentime 开放时间
+ * @param $date 开放时间所在的日期 时间戳
+ */
+function format_opentime($opentime, $date=null)
+{
+    $date = is_null($date) ? strtotime('0:0:0') : intval($date);
+
+    $bitCounts = 0;
+    $openHours = $rangeHour = $rangeDate = [];
+    for ($i = 0; $i < 48; ++$i) {
+        $bopen = $opentime & (1<<$i);
+        if ($bopen) {
+            $bitCounts++;
+            $openHours[] = [$date+$i*1800, date('H:i', $date+$i*1800)];
+        }
+
+        if ( ($bopen && !(count($rangeHour)%2)) || (!$bopen && (count($rangeHour)%2)) ) {
+            $rangeHour[] = [$date+$i*1800, date('H:i', $date+$i*1800)];
+        }
+        if ( ($bopen && !(count($rangeDate)%2)) || (!$bopen && (count($rangeDate)%2)) ) {
+            $rangeDate[] = [$date+$i*1800, date('Y年m月d日 H:i', $date+$i*1800)];
+        }
+    }
+
+    $rangeHour = array_chunk($rangeHour, 2);
+    foreach ($rangeHour as $_range) {
+        $rangeHours[] = ['stime' => $_range[0], 'etime' => $_range[1]];
+    }
+    $rangeDate = array_chunk($rangeDate, 2);
+    foreach ($rangeDate as $_range) {
+        $rangeDates[] = ['stime' => $_range[0], 'etime' => $_range[1]];
+    }
+
+    return ['counts' => round($bitCounts/2, 1), 'openHours' => $openHours, 'rangeHours' => $rangeHours ?? [], 'rangeDates' => $rangeDates ?? []];
+}

@@ -213,22 +213,7 @@ class VenueOrder extends BaseModel
      */
     public function getOpentime()
     {
-        $bitCounts = 0;
-        $timeRange = [];
-        for ($i = 0; $i < 48; ++$i) {
-            $bopen = $this->open_time & (1<<$i);
-            $bopen && $bitCounts++;
-            ($bopen && !(count($timeRange)%2)) && $timeRange[] = date('Y年m月d日 H:i', $this->odate+$i*1800);
-            (!$bopen && (count($timeRange)%2)) && $timeRange[] = date('Y年m月d日 H:i', $this->odate+$i*1800);
-        }
-
-        $ranges = [];
-        $timeRange = array_chunk($timeRange, 2);
-        foreach ($timeRange as $_range) {
-            $ranges[] = $_range[0].'~'.$_range[1];
-        }
-
-        return ['counts' => round($bitCounts/2, 1), 'ranges' => $ranges];
+        return format_opentime($this->open_time, $this->odate);
     }
 
     /**
