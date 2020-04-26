@@ -169,17 +169,17 @@ class VenueMember extends BaseModel
     {
         $find = self::where(['id' => $id, 'school_id' => app()->user->schoolid])->find();
         if (empty($find))   throw new \Exception('成员不存在');
+
+        // 校验角色是否有效
+        $roles = VenueRole::where(['id' => $data['role'], 'school_id' => app()->user->schoolid])->select();
+        if ($roles->isEmpty())  throw new \Exception('无效的角色');
+
+        foreach ($roles as $_role) {
+            $roleIds[$_role->id] = ['rid' => $_role->id, 'mid' => $find->id, 'created_by' => app()->user->id];
+        }
         
         Db::startTrans();
         try {
-            // 校验角色是否有效
-            $roles = VenueRole::where(['id' => $data['role'], 'school_id' => app()->user->schoolid])->select();
-            if ($roles->isEmpty())  throw new \Exception('无效的角色');
-
-            foreach ($roles as $_role) {
-                $roleIds[$_role->id] = ['rid' => $_role->id, 'mid' => $find->id, 'created_by' => app()->user->id];
-            }
-            
             $roles = VenueRoleMember::where('mid', $find->id)->select();
             foreach ($roles as $_vrm) {
                 if (isset($roleIds[$_vrm->rid])) {

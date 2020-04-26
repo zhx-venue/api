@@ -13,8 +13,13 @@ class Architecture extends BaseController
     {
         $departType = input('get.departmentType', 2, 'intval');
         $architecture = [];
-        Contacts::getArchitecture($architecture, $departType);
 
+        try {
+            Contacts::getArchitecture($architecture, $departType);
+        } catch (\Exception $e) {
+            return $this->jsonErr('获取组织架构失败！'.$e->getMessage());
+        }
+        
         return json(Tree::makeTree($architecture, 'DepartmentId', 'ParentId'));
     }
 
@@ -22,7 +27,12 @@ class Architecture extends BaseController
     {
         $daparts = [];
         $departType = input('get.departmentType', null, 'intval');
-        Contacts::getDepartments($daparts, $departType);
+
+        try {
+            Contacts::getDepartments($daparts, $departType);
+        } catch (\Exception $e) {
+            return $this->jsonErr('获取部门列表失败！'.$e->getMessage());
+        }
 
         return json(Tree::makeTree($daparts, 'DepartmentId', 'ParentId'));
     }
@@ -31,7 +41,12 @@ class Architecture extends BaseController
     {
         $users = [];
         $departmentId = input('get.departmentId', 0, 'intval');
-        Contacts::getDepartUsers($departmentId, $users);
+
+        try {
+            Contacts::getDepartUsers($departmentId, $users);
+        } catch (\Exception $e) {
+            return $this->jsonErr('获取部门成员失败！'.$e->getMessage());
+        }
 
         return json($users);
     }

@@ -41,6 +41,7 @@ class Contacts
             } while (($pageSize*$pageIndex++) < $response->Total);
         } catch (\Exception $e) {
             trace('[get department list] - '.$e->getMessage(), 'error');
+            throw $e;
         }
     }
 
@@ -72,6 +73,7 @@ class Contacts
             } while (($pageSize*$pageIndex++) < $response->Total);
         } catch (\Exception $e) {
             trace('[get depart user list] - '.$e->getMessage(), 'error');
+            throw $e;
         }
     }
 
