@@ -114,7 +114,7 @@ class VenueOrder extends BaseModel
 
         if (isset($data['process'])) {
             $now = time();
-            $orederTime = parse_ordertime($orderInfo->odate, $orderInfo->open_time);
+            $orderTime = parse_ordertime($orderInfo->odate, $orderInfo->open_time);
             if ($now > $orderTime[1])   throw new \Exception('该预约已过期');
 
             switch (intval($orderInfo->process)) {
@@ -188,8 +188,8 @@ class VenueOrder extends BaseModel
         if (isset($operateType)) {
             $position = 0;
             switch ($operateType) {
-                case VenueOrderHistory::OPTYPE_SIGNING: { $orederTime[0] < $now && $position |= 1; }
-                case VenueOrderHistory::OPTYPE_SIGNOUTING: { $orederTime[1] > $now && $position |= 1; }
+                case VenueOrderHistory::OPTYPE_SIGNING: { $orderTime[0] < $now && $position |= 1; }
+                case VenueOrderHistory::OPTYPE_SIGNOUTING: { $orderTime[1] > $now && $position |= 1; }
             }
 
             VenueOrderHistory::create([
