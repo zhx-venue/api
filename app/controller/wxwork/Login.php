@@ -223,7 +223,7 @@ class Login extends BaseController
     {
         if (empty($cipherText)) return $this->jsonErr('cipher_text不能为空');
 
-        $authData = base64_decode($cipherText);
+        $authData = base64_decode(urldecode($cipherText));
         $authData && $authData = json_decode($authData, true);
         if (empty($authData))   return $this->jsonErr('无效的参数');
 
