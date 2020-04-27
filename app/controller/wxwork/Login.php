@@ -64,11 +64,8 @@ class Login extends BaseController
         } else {
             return $this->jsonErr('无效的参数');
         }
-
-        if ($userInfo instanceof \think\Response) {
-            var_dump($schoolInfo);
-            return $userInfo;
-        }
+        
+        if ($userInfo instanceof \think\Response)   return $userInfo;
 
         // 生成授权信息
         $userToken = User::generateToken($userInfo, ['schoolid' => $schoolInfo->id]);
