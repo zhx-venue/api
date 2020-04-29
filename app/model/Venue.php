@@ -280,14 +280,17 @@ class Venue extends BaseModel
             $orders = VenueOrder::where(['venue_id' => $this->id, 'odate' => strtotime(date('Ymd 0:0:0', $datetime)), 'status' => self::STATUS_NORMAL])
             ->where('process', 'not in', [VenueOrder::PROCESS_CANCEL, VenueOrder::PROCESS_REVOKED])->select();
             foreach ($orders as $_order) {
-                $facilityOrder[$_order->facility_id][$_order->open_time] = $_order->visitor_id;
+                $facilityOrder[$_order->facility_id][] = [
+                    'visitor_id' => $_order->visitor_id,
+                    'opentime' => format_opentime($_order->open_time)
+                ];
             }
         }
 
         $facilitys = VenueFacility::where(['venue_id' => $this->id, 'status' => self::STATUS_NORMAL])->select()->toArray();
         foreach ($facilitys as $_key => $_facility) {
             if (isset($facilityOrder[$_facility['id']])) {
-                $facilitys[$_key]['ordered_time'] = $facilityOrder[$_facility['id']];
+                $facilitys[$_key]['ordered_time'] = &$facilityOrder[$_facility['id']];
             }
         }
 
