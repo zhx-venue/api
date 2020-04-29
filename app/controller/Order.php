@@ -116,6 +116,7 @@ class Order extends BaseController
     {
         if (!checkAuth(VenueRole::MD_ORDER))   return $this->jsonErr('无权限进行该操作');
 
-        return (new Qrcode)->create(input('get.text', '', 'strval'));
+        echo (new Qrcode())->create(input('get.text', '', 'strval'));
+        exit;
     }
 }

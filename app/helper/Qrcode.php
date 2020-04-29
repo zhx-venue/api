@@ -22,7 +22,7 @@ class Qrcode
     const FOREGROUND_COLOR = ['r' => 0, 'g' => 0, 'b' => 0, 'a' => 0];
     const BACKGROUND_COLOR = ['r' => 255, 'g' => 255, 'b' => 255, 'a' => 0];
 
-    public function __construct($config) {
+    public function __construct($config=[]) {
         isset($config['generate']) && $this->_generate = $config['generate'];
         isset($config['encoding']) && $this->_encoding = $config['encoding'];
         isset($config['size']) && $this->_size = $config['size'];
@@ -40,12 +40,12 @@ class Qrcode
      * @return array | page input
      */
     public function create($content) {
-        $this->_qr = new QrCode($content);
+        $this->_qr = new OriQrCode($content);
         $this->_qr->setSize($this->_size);
         $this->_qr->setWriterByName(self::WRITE_NAME);
         $this->_qr->setMargin(self::MARGIN);
         $this->_qr->setEncoding($this->_encoding);
-        $this->_qr->setErrorCorrectionLevel(ErrorCorrectionLevel::HIGH);
+        $this->_qr->setErrorCorrectionLevel(new ErrorCorrectionLevel(ErrorCorrectionLevel::HIGH));
         $this->_qr->setForegroundColor(self::FOREGROUND_COLOR);
         $this->_qr->setBackgroundColor(self::BACKGROUND_COLOR);
         if ($this->_title) {
