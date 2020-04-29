@@ -7,6 +7,7 @@ use think\Request;
 use app\BaseController;
 use app\model\User;
 use app\model\VenueRole;
+use app\helper\Qrcode;
 
 class Order extends BaseController
 {
@@ -110,11 +111,11 @@ class Order extends BaseController
 
     /**
      * 生成签到签退二维码
-     * 
-     * * @param  int  $id
      */
-    public function qrcode($id)
+    public function qrcode()
     {
         if (!checkAuth(VenueRole::MD_ORDER))   return $this->jsonErr('无权限进行该操作');
+
+        return (new Qrcode)->create(input('get.text', '', 'strval'));
     }
 }
