@@ -18,6 +18,7 @@ class VenueOrder extends BaseModel
     const PROCESS_REVOKED = 3; // 已退订
     const PROCESS_SIGNOUTED = 4; // 已签退
     const PROCESS_REFUSED = 5; // 已拒绝
+    const PROCESS_OVERDUE = 21; // 已过期
 
     /**
      * 格式化字段的查询条件
@@ -115,8 +116,6 @@ class VenueOrder extends BaseModel
         if (isset($data['process'])) {
             $now = time();
             $orderTime = parse_ordertime($orderInfo->odate, $orderInfo->open_time);
-            if ($now > $orderTime[1])   throw new \Exception('该预约已过期');
-
             switch (intval($orderInfo->process)) {
                 case self::PROCESS_CANCEL: // 已取消
                 case self::PROCESS_REVOKED: // 已退订
@@ -140,6 +139,7 @@ class VenueOrder extends BaseModel
                             if (! (isset($userAuths) && $userAuths['pos'] & 1)) {
                                 throw new \Exception('仅允许学校管理员审核');
                             }
+                            if ($now > $orderTime[1])   throw new \Exception('该预约已过期');
                             break;
                         }
                         default: { throw new \Exception('该预约记录当前不支持该操作'); }
@@ -148,6 +148,7 @@ class VenueOrder extends BaseModel
                     break;
                 }
                 case self::PROCESS_SIGNING: { // 待签到
+                    if ($now > $orderTime[1])   throw new \Exception('该预约已过期');
                     if ($data['process'] == self::PROCESS_REVOKED) {
                         $operateType = VenueOrderHistory::OPTYPE_REVOKED;
                         if (app()->user->type != User::TYPE_VISITOR) {
@@ -244,6 +245,15 @@ class VenueOrder extends BaseModel
      */
     public function getOpentime()
     {
+        // 待审核，待签到等未处理过期的预约更新进度
+        if (in_array($this->process, [self::PROCESS_SIGNING, self::PROCESS_CHECKING])) {
+            $now = time();
+            $orderTime = parse_ordertime($this->odate, $this->open_time);
+            if ($now > $orderTime[1]) {
+                $this->process = self::PROCESS_OVERDUE;
+            }
+        }
+       
         return format_opentime($this->open_time, $this->odate);
     }
 

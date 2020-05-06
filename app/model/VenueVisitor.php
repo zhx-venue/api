@@ -102,8 +102,50 @@ class VenueVisitor extends BaseModel
     /**
      * 统计游客信用分
      */
-    public function getCreditScore()
+    public function getCreditScore($datetime=null)
     {
-        return 100;
+        $init = 100; // 月初始分
+        $revoke = -6; // 退订扣分
+        $overdue = -10; // 逾期扣分
+        $complete = 2; // 正常完成得分
+
+        // 给定时间，当月份所应有的天数
+        $time = $datetime ?? time();
+        $mdays = date('t', $time);
+
+        // 查询游客所有预约记录
+        $now = time();
+        VenueOrder::where('visitor_id', $this->id)
+        ->where('process', '<>', VenueOrder::PROCESS_CHECKING)
+        ->where('status', VenueOrder::STATUS_NORMAL)
+        ->where('odate', '>=', strtotime(date('Y-m-1 00:00:00', $time)))
+        ->where('odate', '<=', strtotime(date('Y-m-'.$mdays.' 23:59:59',$time)))
+        ->chunk(100, function ($records) use (&$init, &$revoke, &$overdue, &$complete) {
+            foreach ($records as $record) {
+                switch ($record->process) {
+                    case VenueOrder::PROCESS_SIGNING: {
+                        // 过了结束时间还未入场，已逾期
+                        $orderTime = parse_ordertime($record->odate, $record->open_time);
+                        $now > $orderTime[1] && $init -= $overdue;
+                        break;
+                    }
+                    case VenueOrder::PROCESS_REVOKED: { // 退订
+                        $init -= $revoke;
+                        break;
+                    }
+                    case VenueOrder::PROCESS_SIGNOUTED: { // 已签退，完成预定过程
+                        $init += $complete;
+                        break;
+                    }
+                    case VenueOrder::PROCESS_CANCEL: // 已取消预约
+                    case VenueOrder::PROCESS_REFUSED: // 已拒绝预约
+                    case VenueOrder::PROCESS_SIGNOUTING: { // 已签到待签退
+                        break;
+                    }
+                }
+            }
+        });
+
+        return $init;
     }
 }
