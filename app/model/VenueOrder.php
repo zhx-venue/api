@@ -216,7 +216,8 @@ class VenueOrder extends BaseModel
 
     public function getVisitor()
     {
-        return VenueVisitor::find($this->visitor_id);
+        $visitor = VenueVisitor::find($this->visitor_id);
+        return array_merge($visitor->toArray(), ['creditScore' => $visitor->getCreditScore($this->odate)]);
     }
 
     public function getSchool()

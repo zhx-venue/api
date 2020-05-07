@@ -114,7 +114,6 @@ class VenueVisitor extends BaseModel
         $mdays = date('t', $time);
 
         // 查询游客所有预约记录
-        $now = time();
         VenueOrder::where('visitor_id', $this->id)
         ->where('process', '<>', VenueOrder::PROCESS_CHECKING)
         ->where('status', VenueOrder::STATUS_NORMAL)
@@ -125,6 +124,7 @@ class VenueVisitor extends BaseModel
                 switch ($record->process) {
                     case VenueOrder::PROCESS_SIGNING: {
                         // 过了结束时间还未入场，已逾期
+                        $now = time();
                         $orderTime = parse_ordertime($record->odate, $record->open_time);
                         $now > $orderTime[1] && $init -= $overdue;
                         break;
