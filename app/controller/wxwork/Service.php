@@ -62,14 +62,14 @@ class Service extends BaseController
                 $installForm->record();
 
                 //处理加密信息
-                $authData = json_encode([
+                $authData = [
                     'corpid' => $installForm->permanentInfo->auth_corp_info->corpid,
                     'name' => $installForm->permanentInfo->auth_user_info->name,
                     'avatar' => $installForm->permanentInfo->auth_user_info->avatar,
                     'userid' => $installForm->permanentInfo->auth_user_info->userid,
-                ]);
+                ];
                 $cipherText = base64_encode(json_encode($authData, JSON_UNESCAPED_UNICODE));
-                redirect('/index/installed?cipher_text='.urlencode($cipherText))->send();
+                redirect((config('wxwork.front_domain') ?? '/index/installed').'?cipher_text='.urlencode($cipherText))->send();
 
                 // 初始化学校主体信息
                 CreateAuth::deal($installForm->permanentInfo);

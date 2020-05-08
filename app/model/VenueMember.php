@@ -5,7 +5,8 @@ namespace app\model;
 
 use think\facade\Db;
 use app\BaseModel;
-use app\wxwork\Contacts;
+use app\campus\Contacts as CampusContacts;
+use app\wxwork\Contacts as WxworkContacts;
 
 /**
  * @mixin think\Model
@@ -25,18 +26,17 @@ class VenueMember extends BaseModel
     }
 
     /**
-     * 添加记录
+     * 企业微信添加成员数据校验
      */
-    public function addItem($data)
+    private function _memberWork(&$members, &$validUsers)
     {
         // 校验企业微信成员信息
-        foreach ($data['member'] as $_userInfo) {
-            $userIds[$_userInfo['id']] = $_userInfo;
-            unset($userIds[$_userInfo['id']]['id']);
+        foreach ($members as $_key => $_userInfo) {
+            $userIds[$_userInfo['id']] = &$members[$_key];
         }
         if (!isset($userIds))    throw new \Exception('请选择要添加的成员');
-
-        $users = Contacts::authFocus(array_keys($userIds));
+        
+        $users = WxworkContacts::authFocus(array_keys($userIds));
         foreach ($users['unfocus'] as $_userid) {
             $unfocus[] = $userIds[$_userid]['name'] ?? $_userid;
         }
@@ -48,33 +48,84 @@ class VenueMember extends BaseModel
         }
 
         $errMsg = '';
-        isset($unfocus) && $errMsg .= implode('、', $unfocus).' 尚未关注企业号 ';
-        isset($nonexist) && $errMsg .= implode('、', $nonexist).' 不在该企业号 ';
+        isset($unfocus) && $errMsg .= implode('、', $unfocus).' 尚未关注企业 ';
+        isset($nonexist) && $errMsg .= implode('、', $nonexist).' 不在该企业 ';
         isset($outrange) && $errMsg .= implode('、', $outrange).' 不在应用可见范围 ';
         if (!empty($errMsg))    throw new \Exception($errMsg);
 
         foreach ($users['focus'] as $_userid) {
-            $focus[$_userid] = [
+            $validUsers[$_userid] = [
                 'corpid' => app()->user->corpid, 
                 'userid' => $_userid, 
                 'name' => $userIds[$_userid]['name'] ?? $_userid,
                 'avatar' => $userIds[$_userid]['avatar'] ?? '',
             ];
         }
-        if (!isset($focus)) throw new \Exception('无效的成员');
+        if (empty($validUsers)) throw new \Exception('无效的成员');
+    }
 
+    /**
+     * 智慧校园添加成员数据校验
+     */
+    private function _memberCampus(&$members, &$validUsers)
+    {
+        // 校验企业微信成员信息
+        foreach ($members as $_key => $_userInfo) {
+            $userIds[$_userInfo['OrgUserId']] = &$members[$_key];
+        }
+        if (!isset($userIds))    throw new \Exception('请选择要添加的成员');
+        
+        $users = CampusContacts::authFocus(array_keys($userIds));
+        foreach ($users['unfocus'] as $_userid) {
+            $unfocus[] = $userIds[$_userid]['Name'] ?? $_userid;
+        }
+        foreach ($users['outrange'] as $_userid) {
+            $outrange[] = $userIds[$_userid]['Name'] ?? $_userid;
+        }
+        foreach ($users['nonexist'] as $_userid) {
+            $nonexist[] = $userIds[$_userid]['Name'] ?? $_userid;
+        }
+
+        $errMsg = '';
+        isset($unfocus) && $errMsg .= implode('、', $unfocus).' 尚未关注企业 ';
+        isset($nonexist) && $errMsg .= implode('、', $nonexist).' 不在该企业 ';
+        isset($outrange) && $errMsg .= implode('、', $outrange).' 不在应用可见范围 ';
+        if (!empty($errMsg))    throw new \Exception($errMsg);
+
+        foreach ($users['focus'] as $_userid) {
+            isset($userIds[$_userid]['OpenUserId']) && $validUsers[$userIds[$_userid]['OpenUserId']] = [
+                'openuserid' => $userIds[$_userid]['OpenUserId'], 
+                'name' => $userIds[$_userid]['Name'] ?? $userIds[$_userid]['OpenUserId'],
+                'avatar' => $userIds[$_userid]['avatar'] ?? '',
+            ];
+        }
+        if (empty($validUsers)) throw new \Exception('无效的成员');
+    }
+
+    /**
+     * 添加记录
+     */
+    public function addItem($data)
+    {
         // 校验角色是否有效
         $roles = VenueRole::where(['id' => $data['role'], 'school_id' => app()->user->schoolid, 'status' => VenueRole::STATUS_NORMAL])->select();
         if ($roles->isEmpty())  throw new \Exception('无效的角色');
 
+        $corpid = app()->user->corpid;
+        if ($corpid) {
+            $this->_memberWork($data['member'], $roleUsers);
+        } else {
+            $this->_memberCampus($data['member'], $roleUsers);
+        }
+
         Db::startTrans();
         try {
             // 检查用户是否存在，不存在则新增用户
-            VenueUser::extra('IGNORE')->limit(100)->insertAll(array_values($focus));
+            VenueUser::extra('IGNORE')->limit(100)->insertAll(array_values($roleUsers));
 
             // 添加用户到学校成员
-            $focus = VenueUser::where(['corpid' => app()->user->corpid, 'userid' => array_keys($focus)])->select();
-            foreach ($focus as $_user) {
+            $roleUsers = VenueUser::where($corpid ? ['corpid' => $corpid, 'userid' => array_keys($roleUsers)] : ['openuserid' => array_keys($roleUsers)])->select();
+            foreach ($roleUsers as $_user) {
                 $memberData[$_user->id] = [
                     'user_id' => $_user->id,
                     'school_id' => app()->user->schoolid,
@@ -118,17 +169,17 @@ class VenueMember extends BaseModel
     {
         $find = self::where(['id' => $id, 'school_id' => app()->user->schoolid])->find();
         if (empty($find))   throw new \Exception('成员不存在');
+
+        // 校验角色是否有效
+        $roles = VenueRole::where(['id' => $data['role'], 'school_id' => app()->user->schoolid])->select();
+        if ($roles->isEmpty())  throw new \Exception('无效的角色');
+
+        foreach ($roles as $_role) {
+            $roleIds[$_role->id] = ['rid' => $_role->id, 'mid' => $find->id, 'created_by' => app()->user->id];
+        }
         
         Db::startTrans();
         try {
-            // 校验角色是否有效
-            $roles = VenueRole::where(['id' => $data['role'], 'school_id' => app()->user->schoolid])->select();
-            if ($roles->isEmpty())  throw new \Exception('无效的角色');
-
-            foreach ($roles as $_role) {
-                $roleIds[$_role->id] = ['rid' => $_role->id, 'mid' => $find->id, 'created_by' => app()->user->id];
-            }
-            
             $roles = VenueRoleMember::where('mid', $find->id)->select();
             foreach ($roles as $_vrm) {
                 if (isset($roleIds[$_vrm->rid])) {

@@ -10,11 +10,32 @@ use app\BaseModel;
  */
 class VenueOrderHistory extends BaseModel
 {
-    const OPTYPE_CHECKING = 1; // 审核操作类型
-    const OPTYPE_SIGNING = 2; // 签到操作类型
-    const OPTYPE_SIGNOUTING = 3; // 签退操作类型
-    const OPTYPE_REVOKED = 4; // 退订操作类型
-    const OPTYPE_SIGNOUTED = 5; // 签退操作类型
-    const OPTYPE_REFUSED = 6; // 拒绝操作类型
-    const OPTYPE_CANCEL = 7; // 取消操作类型
+    /**
+     * 审核操作类型
+     */
+    const OPTYPE_CHECKING = 1;
+    /**
+     * 签到操作类型
+     * postion代表的含义：
+     * bit0:签到是否迟到;
+     */
+    const OPTYPE_SIGNING = 2;
+    /**
+     * 签退操作类型
+     * postion代表的含义：
+     * bit0:签到是否早退;
+     */
+    const OPTYPE_SIGNOUTING = 3;
+    /**
+     * 退订操作类型
+     */
+    const OPTYPE_REVOKED = 4;
+    /**
+     * 拒绝操作类型
+     */
+    const OPTYPE_REFUSED = 5;
+    /**
+     * 取消操作类型
+     */
+    const OPTYPE_CANCEL = 6;
 }

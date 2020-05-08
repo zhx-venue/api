@@ -72,7 +72,7 @@ class VenueMember extends Validate
         $bvalid = true;
         if (is_array($value)) {
             foreach ($value as $_member) {
-                if (!isset($_member['id'])) {
+                if ( !(isset($_member['id']) || ( isset($_member['OrgUserId']) && isset($_member['OpenUserId']) )) ) {
                     $bvalid = false;
                     break;
                 }

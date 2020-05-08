@@ -36,7 +36,7 @@ class Login extends BaseController
         if (empty($schoolInfo)) return $this->jsonErr('企业号未正确安装德育管理应用，请联系管理员重新安装');
         
         // 生成授权信息
-        $userToken = User::generateToken($userInfo, $schoolInfo->id);
+        $userToken = User::generateToken($userInfo, ['schoolid' => $schoolInfo->id]);
 
         // 输出学校信息
         $userToken['school'] = [
@@ -64,14 +64,11 @@ class Login extends BaseController
         } else {
             return $this->jsonErr('无效的参数');
         }
-
-        if ($userInfo instanceof \think\Response) {
-            var_dump($schoolInfo);
-            return $userInfo;
-        }
+        
+        if ($userInfo instanceof \think\Response)   return $userInfo;
 
         // 生成授权信息
-        $userToken = User::generateToken($userInfo, $schoolInfo->id);
+        $userToken = User::generateToken($userInfo, ['schoolid' => $schoolInfo->id]);
 
         // 输出学校信息
         $userToken['school'] = [
@@ -222,11 +219,11 @@ class Login extends BaseController
         return $userInfo;
     }
 
-    private function _getUserByCipherText($cipher_text, VenueSchool &$schoolInfo=null)
+    private function _getUserByCipherText($cipherText, VenueSchool &$schoolInfo=null)
     {
         if (empty($cipherText)) return $this->jsonErr('cipher_text不能为空');
 
-        $authData = base64_decode($cipherText);
+        $authData = base64_decode(urldecode($cipherText));
         $authData && $authData = json_decode($authData, true);
         if (empty($authData))   return $this->jsonErr('无效的参数');
 

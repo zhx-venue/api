@@ -280,14 +280,17 @@ class Venue extends BaseModel
             $orders = VenueOrder::where(['venue_id' => $this->id, 'odate' => strtotime(date('Ymd 0:0:0', $datetime)), 'status' => self::STATUS_NORMAL])
             ->where('process', 'not in', [VenueOrder::PROCESS_CANCEL, VenueOrder::PROCESS_REVOKED])->select();
             foreach ($orders as $_order) {
-                $facilityOrder[$_order->facility_id][$_order->open_time] = $_order->visitor_id;
+                $facilityOrder[$_order->facility_id][] = [
+                    'visitor_id' => $_order->visitor_id,
+                    'opentime' => format_opentime($_order->open_time)
+                ];
             }
         }
 
         $facilitys = VenueFacility::where(['venue_id' => $this->id, 'status' => self::STATUS_NORMAL])->select()->toArray();
         foreach ($facilitys as $_key => $_facility) {
             if (isset($facilityOrder[$_facility['id']])) {
-                $facilitys[$_key]['ordered_time'] = $facilityOrder[$_facility['id']];
+                $facilitys[$_key]['ordered_time'] = &$facilityOrder[$_facility['id']];
             }
         }
 
@@ -319,22 +322,7 @@ class Venue extends BaseModel
      */
     public function getOpentime()
     {
-        $bitCounts = 0;
-        $timeRange = [];
-        for ($i = 0; $i < 48; ++$i) {
-            $bopen = $this->open_time & (1<<$i);
-            $bopen && $bitCounts++;
-            ($bopen && !(count($timeRange)%2)) && $timeRange[] = date('H:i', strtotime('0:0:0')+$i*1800);
-            (!$bopen && (count($timeRange)%2)) && $timeRange[] = date('H:i', strtotime('0:0:0')+$i*1800);
-        }
-
-        $ranges = [];
-        $timeRange = array_chunk($timeRange, 2);
-        foreach ($timeRange as $_range) {
-            $ranges[] = $_range[0].'~'.$_range[1];
-        }
-
-        return ['counts' => round($bitCounts/2, 1), 'ranges' => $ranges];
+        return format_opentime($this->open_time);
     }
 
     /**

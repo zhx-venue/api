@@ -80,6 +80,7 @@ CREATE TABLE `zhx_venue_school` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `title` varchar(32) NOT NULL DEFAULT '' COMMENT '学校名称',
   `appid` varchar(32) DEFAULT NULL COMMENT '授权公众号appid',
+  `orgid` varchar(32) DEFAULT NULL COMMENT '授权智慧校园OrgId',
   `corpid` varchar(32) DEFAULT NULL COMMENT '授权企业微信corpid',
   `province_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '省级id',
   `city_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '市级id',
@@ -96,6 +97,7 @@ CREATE TABLE `zhx_venue_school` (
   `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNQ_APPID` (`appid`) USING BTREE,
+  UNIQUE KEY `UNQ_ORGID` (`orgid`) USING BTREE,
   UNIQUE KEY `UNQ_CORPID` (`corpid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆学校记录表';
 
@@ -106,8 +108,9 @@ CREATE TABLE `zhx_venue_user` (
   `nickname` varchar(32) NOT NULL DEFAULT '' COMMENT '昵称',
   `email` varchar(128) DEFAULT NULL COMMENT '用户邮箱',
   `mobile` varchar(16) DEFAULT NULL COMMENT '用户手机',
-  `corpid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信corpid',
-  `userid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信userid',
+  `openuserid` varchar(32) DEFAULT NULL COMMENT '智慧校园用户唯一id',
+  `corpid` varchar(32) DEFAULT NULL COMMENT '企业微信corpid',
+  `userid` varchar(32) DEFAULT NULL COMMENT '企业微信userid',
   `openid` varchar(32) NOT NULL DEFAULT '' COMMENT '企业微信openid',
   `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
   `gender` tinyint(4) NOT NULL DEFAULT '0' COMMENT '性别(0:未设置;1:男;2:女;)',
@@ -129,6 +132,7 @@ CREATE TABLE `zhx_venue_user` (
   `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间',
   `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新用户id',
   PRIMARY KEY (`id`),
+  UNIQUE KEY `UNQ_OPENUSERID` (`openuserid`) USING BTREE,
   UNIQUE KEY `UNQ_CORPID_USERID` (`corpid`,`userid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='用户表';
 
@@ -166,6 +170,21 @@ CREATE TABLE `zhx_venue_visitor` (
   UNIQUE KEY `UNQ_OPENID` (`openid`) USING BTREE,
   KEY `INX_MOBILE` (`mobile`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='小程序访客记录表';
+
+DROP TABLE IF EXISTS  `zhx_venue_visitor_ban`;
+CREATE TABLE `zhx_venue_visitor_ban` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `school_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '学校记录ID',
+  `visitor_id` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '访客记录ID',
+  `status` tinyint NOT NULL DEFAULT '1' COMMENT '状态(0:禁用;1:正常;)',
+  `created_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建时间戳',
+  `created_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '创建人id',
+  `updated_at` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新时间戳',
+  `updated_by` int(11) unsigned NOT NULL DEFAULT '0' COMMENT '更新人id',
+  PRIMARY KEY (`id`),
+  KEY `INX_SCHOOLID` (`school_id`) USING BTREE,
+  KEY `INX_VISITORID` (`visitor_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='小程序访客禁用记录表';
 
 DROP TABLE IF EXISTS  `zhx_venue_member`;
 CREATE TABLE `zhx_venue_member` (
@@ -241,6 +260,13 @@ CREATE TABLE `zhx_venue_type` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNQ_TITLE` (`title`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆类型记录表';
+INSERT INTO `zhx_venue_type` (`id`, `title`, `position`, `sort`, `status`, `created_at`, `created_by`, `updated_at`, `updated_by`) VALUES
+(1, '篮球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(2, '足球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(3, '网球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(4, '乒乓球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(5, '羽毛球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(6, '室外篮球场', 0, 0, 1, 1581501898, 4, 1581501898, 4);
 
 DROP TABLE IF EXISTS  `zhx_venue_school_type`;
 CREATE TABLE `zhx_venue_school_type` (

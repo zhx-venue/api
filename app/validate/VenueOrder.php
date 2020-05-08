@@ -64,7 +64,8 @@ class VenueOrder extends Validate
             MVenueOrder::PROCESS_SIGNING,
             MVenueOrder::PROCESS_SIGNOUTING,
             MVenueOrder::PROCESS_REVOKED,
-            MVenueOrder::PROCESS_SIGNOUTED
+            MVenueOrder::PROCESS_SIGNOUTED,
+            MVenueOrder::PROCESS_REFUSED
         ]) ? true : '无效的预约进度';
     }
 

@@ -57,4 +57,24 @@ class Login extends BaseController
         isset($res['session_key']) && $userToken['session_key'] = isset($res['session_key']);
         return $this->jsonOk($userToken);
     }
+
+    public function decryptData()
+	{
+        $iv = input('post.iv', '', 'strval');
+        if (empty($iv)) return $this->jsonErr('iv不能为空');
+        $openid = input('post.openid', '', 'strval');
+        if (empty($openid)) return $this->jsonErr('openid不能为空');
+        $encryptedData = input('post.encryptedData', '', 'strval');
+        if (empty($encryptedData)) return $this->jsonErr('加密数据不能为空');
+
+		$data = null;
+		try {
+            $api = new MiniApi();
+            $api->decryptData($encryptedData, $iv, $openid, $data);
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
+        
+        return $this->jsonOk($data);
+	}
 }

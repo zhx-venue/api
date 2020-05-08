@@ -28,6 +28,24 @@ class School extends BaseController
     }
 
     /**
+     * 显示指定的资源
+     *
+     * @param  int  $id
+     * @return \think\Response
+     */
+    public function read($id)
+    {
+        if (!checkAuth(VenueRole::MD_SCHOOL))   return $this->jsonErr('无权限进行该操作');
+
+        $query = $this->modelClass::where(['id' => $id]);
+        try {
+            return json((new $this->modelClass)->getItem($query));
+        } catch (\Exception $e) {
+            return $this->jsonErr($e->getMessage());
+        }
+    }
+
+    /**
      * 通过场地类型搜索学校
      */
     public function list_by_venue()
