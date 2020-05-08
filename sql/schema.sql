@@ -260,6 +260,13 @@ CREATE TABLE `zhx_venue_type` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNQ_TITLE` (`title`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='场馆类型记录表';
+INSERT INTO `zhx_venue_type` (`id`, `title`, `position`, `sort`, `status`, `created_at`, `created_by`, `updated_at`, `updated_by`) VALUES
+(1, '篮球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(2, '足球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(3, '网球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(4, '乒乓球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(5, '羽毛球场', 1, 0, 1, 1581134529, 0, 1581134529, 0),
+(6, '室外篮球场', 0, 0, 1, 1581501898, 4, 1581501898, 4);
 
 DROP TABLE IF EXISTS  `zhx_venue_school_type`;
 CREATE TABLE `zhx_venue_school_type` (

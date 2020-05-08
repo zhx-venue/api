@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b5ac6bddf7bfdcf96904880f9658f3a7",
+    "content-hash": "6053d8903aca3afd07140ef9fb958f50",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -785,23 +785,17 @@
         },
         {
             "name": "shophy/miniprogram",
-            "version": "v0.1.3",
+            "version": "v0.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/shophy1987/miniprogram.git",
-                "reference": "bc98b9b9e7feb9370936ab2707bc1f2c882dc8dc"
+                "reference": "ce0e7684c7742c0bf819b6d8bd132015a8851b14"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/shophy1987/miniprogram/zipball/bc98b9b9e7feb9370936ab2707bc1f2c882dc8dc",
-                "reference": "bc98b9b9e7feb9370936ab2707bc1f2c882dc8dc",
-                "shasum": "",
-                "mirrors": [
-                    {
-                        "url": "https://mirrors.aliyun.com/composer/dists/%package%/%reference%.%type%",
-                        "preferred": true
-                    }
-                ]
+                "url": "https://api.github.com/repos/shophy1987/miniprogram/zipball/ce0e7684c7742c0bf819b6d8bd132015a8851b14",
+                "reference": "ce0e7684c7742c0bf819b6d8bd132015a8851b14",
+                "shasum": ""
             },
             "type": "library",
             "autoload": {
@@ -820,7 +814,7 @@
                 }
             ],
             "description": "miniprogram-php-sdk",
-            "time": "2020-02-11T08:28:44+00:00"
+            "time": "2020-03-31T08:15:53+00:00"
         },
         {
             "name": "shophy/wxwork",
