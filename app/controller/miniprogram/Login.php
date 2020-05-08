@@ -26,21 +26,20 @@ class Login extends BaseController
     {
         try {
             $api = new MiniApi();
-            $res = $api->getSessionByCode($code);
-            if (!$res)  return $this->jsonErr('['.$api->errCode.']'.$api->errMsg);
+            $api->getSessionByCode($code);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());
         }
 
-        $openid = $res['openid'] ?? '';
-        $sessionKey = $res['session_key'] ?? '';
+        $openid = $api->rspJson['openid'] ?? '';
+        $sessionKey = $api->rspJson['session_key'] ?? '';
         if (empty($openid)) return $this->jsonErr('获取用户信息失败');
 
-        $visitor = VenueVisitor::where('openid', $res['openid'])->find();
+        $visitor = VenueVisitor::where('openid', $openid)->find();
         if (empty($visitor))    return $this->jsonErr('无访客信息', 401, ['openid' => $openid, 'session_key' => $sessionKey]);
 
         $userToken = User::generateToken($visitor);
-        isset($res['session_key']) && $userToken['session_key'] = isset($res['session_key']);
+        empty($sessionKey) || $userToken['session_key'] = $sessionKey;
         return $this->jsonOk($userToken);
     }
 
