@@ -19,7 +19,7 @@ class Api extends MiniApi
 	 * @param int $expired
 	 * @return boolean
 	 */
-	protected function setCache($cachename,$value,$expired){
+	protected function setCache($cachename,$value,$expired=null){
 		//TODO: set cache implementation
 		return cache($cachename, $value, $expired);
 	}
