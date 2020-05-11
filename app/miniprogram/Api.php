@@ -6,10 +6,19 @@ use shophy\miniprogram\Api as MiniApi;
 
 class Api extends MiniApi
 {
-    public function __construct()
+    public function __construct($appid=null)
 	{
-		$config = config('miniprogram') ?? [];
-		parent::__construct($config['appid'] ?? '', $config['secret'] ?? '');
+		if (!empty($appid)) {
+			$appid = env($appid.'_APPID');
+			$secret = env($appid.'_SECRET');
+		}
+		if (empty($appid)) {
+			$config = config('miniprogram') ?? [];
+			$appid = $config['appid'] ?? '';
+			$secret = $config['secret'] ?? '';
+		}
+
+		parent::__construct($appid, $secret);
     }
 
     /**

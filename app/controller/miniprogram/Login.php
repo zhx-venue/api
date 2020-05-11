@@ -25,7 +25,7 @@ class Login extends BaseController
     public function token($code)
     {
         try {
-            $api = new MiniApi();
+            $api = new MiniApi(input('get.appid'));
             $api->getSessionByCode($code);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());
@@ -68,7 +68,7 @@ class Login extends BaseController
 
 		$data = null;
 		try {
-            $api = new MiniApi();
+            $api = new MiniApi(input('post.appid'));
             $api->decryptData($encryptedData, $iv, $openid, $data);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());

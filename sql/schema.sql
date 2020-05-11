@@ -158,6 +158,7 @@ CREATE TABLE `zhx_venue_visitor` (
   `name` char(32) NOT NULL DEFAULT '' COMMENT '姓名',
   `mobile` char(18) NOT NULL DEFAULT '' COMMENT '手机号码',
   `id_number` char(24) NOT NULL DEFAULT '' COMMENT '身份证号码',
+  `appid` varchar(24) NOT NULL DEFAULT '' COMMENT 'appid',
   `openid` varchar(128) NOT NULL DEFAULT '' COMMENT 'openid',
   `avatar` varchar(255) NOT NULL DEFAULT '' COMMENT '头像',
   `gender` tinyint NOT NULL DEFAULT '0' COMMENT '性别(1:男;2:女;)',
