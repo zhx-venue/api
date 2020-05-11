@@ -55,6 +55,7 @@ CREATE TABLE `zhx_corp_history` (
   KEY `INX_CORPID` (`corpid`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='企业微信安装历史记录';
 
+DROP TABLE IF EXISTS  `zhx_venue_file`;
 CREATE TABLE `zhx_venue_file` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键',
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '原文件名称',

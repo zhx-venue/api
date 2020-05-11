@@ -78,7 +78,7 @@ class Venue extends Validate
     protected function checkFacility($value)
     {
         $bvalid = true;
-        if (is_array($value)) {
+        if (!empty($value) && is_array($value)) {
             $titles = [];
             foreach ($value as $_val) {
                 if (isset($_val['title']) && is_string($_val['title']) && !empty($_val['title']) && !isset($titles[$_val['title']])) continue;
