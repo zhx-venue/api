@@ -32,6 +32,16 @@ class Index extends BaseController
         $this->middleware = [];
     }
 
+    public function index()
+    {
+        $hours = [];
+        $openTime = input('get.opentime', 0, 'intval');
+        for ($i = 0; $i < 24; ++$i) {
+            if (($openTime>>($i*2))&1 && ($openTime>>($i*2+1))&1)   $hours[] = $i;
+        }
+        return json($hours);
+    }
+
     public function login()
     {
         try {
@@ -45,61 +55,5 @@ class Index extends BaseController
         }
         
         return json($response->serialize());
-    }
-
-    public function test()
-    {
-        try {
-            $request = new GetOrgAdminsRequest();
-            // $request->deserialize([
-            //     'Seq' => input('get.seq', null, 'strval')
-            // ]);
-
-            $campus = new Campus(config('campus.appId') ?? '', config('campus.secretId') ?? '', config('campus.secretKey') ?? '');
-            $campus->orgId = input('get.orgid', 0, 'intval');
-            $response = $campus->GetOrgAdmins($request);
-        } catch (\Exception $e) {
-            return $this->jsonErr($e->getMessage());
-        }
-        
-        return json($response->serialize());
-    }
-
-    public function index()
-    {
-        $hours = [];
-        $openTime = input('get.opentime', 0, 'intval');
-        for ($i = 0; $i < 24; ++$i) {
-            if (($openTime>>($i*2))&1 && ($openTime>>($i*2+1))&1)   $hours[] = $i;
-        }
-        return json($hours);
-    }
-
-    /**
-     * 测试使用
-     */
-    public function installed()
-    {
-        return json(input('get.'));
-    }
-
-    public function request()
-    {
-        dump($this->request);
-    }
-
-    public function phpinfo()
-    {
-        echo phpinfo();
-    }
-
-    public function asyncRet()
-    {
-        set_time_limit(0);
-        ignore_user_abort(true);
-        json(['code' => 0, 'msg' => 'async return'])->send();
-
-        usleep(5000000);
-        trace('usleep trace');
     }
 }

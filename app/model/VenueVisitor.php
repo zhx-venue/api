@@ -105,8 +105,8 @@ class VenueVisitor extends BaseModel
     public function getCreditScore($datetime=null)
     {
         $init = 100; // 月初始分
-        $revoke = -6; // 退订扣分
-        $overdue = -10; // 逾期扣分
+        $revoke = 6; // 退订扣分
+        $overdue = 10; // 逾期扣分
         $complete = 2; // 正常完成得分
 
         // 给定时间，当月份所应有的天数
