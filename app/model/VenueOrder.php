@@ -11,6 +11,9 @@ use app\helper\XDeode;
  */
 class VenueOrder extends BaseModel
 {
+    // 限制预约的最低信用分，低于该值不可以预约
+    const LIMIT_CREDITSCORE = 90;
+
     const PROCESS_CANCEL = -1; // 已取消
     const PROCESS_CHECKING = 0; // 待审核
     const PROCESS_SIGNING = 1; // 待签到
@@ -78,6 +81,9 @@ class VenueOrder extends BaseModel
             $orderedTime |= intval($value);
         }
         if ($orderTime & $orderedTime)  throw new \Exception('该时间段已经被预约了');
+
+        // 检查访客信用分
+        if (self::calculateCreditScore(app()->user->id) < self::LIMIT_CREDITSCORE)  throw new \Exception('您信用分低于可以预约限制(低于'.self::LIMIT_CREDITSCORE.'无法预约)');
 
         // 添加预约记录
         $orderInfo = self::create([
@@ -332,5 +338,55 @@ class VenueOrder extends BaseModel
                 ->where(['v.id' => $this->venue_id])->value('vt.title');
             empty($typeTitle) || $value[$this->venue_id] = ['id' => $this->venue_id, 'title' => $typeTitle, 'counts' => 1];
         }
+    }
+
+    /**
+     * 通过预约记录计算访客信用分
+     */
+    public static function calculateCreditScore($visitorId, $datetime=null)
+    {
+        $init = 100; // 月初始分
+        $revoke = 6; // 退订扣分
+        $overdue = 10; // 逾期扣分
+        $complete = 2; // 正常完成得分
+
+        // 给定时间，当月份所应有的天数
+        $time = $datetime ?? time();
+        $mdays = date('t', $time);
+
+        // 查询游客所有预约记录
+        self::where('visitor_id', $visitorId)
+        ->where('process', '<>', self::PROCESS_CHECKING)
+        ->where('status', self::STATUS_NORMAL)
+        ->where('odate', '>=', strtotime(date('Y-m-1 00:00:00', $time)))
+        ->where('odate', '<=', strtotime(date('Y-m-'.$mdays.' 23:59:59',$time)))
+        ->chunk(100, function ($records) use (&$init, &$revoke, &$overdue, &$complete) {
+            foreach ($records as $record) {
+                switch ($record->process) {
+                    case self::PROCESS_SIGNING: {
+                        // 过了结束时间还未入场，已逾期
+                        $now = time();
+                        $orderTime = parse_ordertime($record->odate, $record->open_time);
+                        $now > $orderTime[1] && $init -= $overdue;
+                        break;
+                    }
+                    case self::PROCESS_REVOKED: { // 退订
+                        $init -= $revoke;
+                        break;
+                    }
+                    case self::PROCESS_SIGNOUTED: { // 已签退，完成预定过程
+                        $init += $complete;
+                        break;
+                    }
+                    case self::PROCESS_CANCEL: // 已取消预约
+                    case self::PROCESS_REFUSED: // 已拒绝预约
+                    case self::PROCESS_SIGNOUTING: { // 已签到待签退
+                        break;
+                    }
+                }
+            }
+        });
+
+        return $init;
     }
 }
