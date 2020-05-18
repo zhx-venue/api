@@ -273,8 +273,7 @@ class VenueRole extends BaseModel
         $modules = [
             self::MD_SCHOOL => [0],
             self::MD_VENUE => [0],
-            self::MD_VISITOR => [0],
-            self::MD_VENUETYPE => [0],
+            self::MD_VISITOR => [0]
         ];
         foreach ($modules as $module => $positions) {
             foreach ($positions as $position) {
