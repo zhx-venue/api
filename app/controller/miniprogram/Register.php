@@ -12,7 +12,10 @@ use think\exception\ValidateException;
 class register extends BaseController
 {
     // 重置中间件
-    protected function _middleware() {}
+    protected function _middleware() 
+    {
+        return [];
+    }
 
     /**
      * 小程序访客注册

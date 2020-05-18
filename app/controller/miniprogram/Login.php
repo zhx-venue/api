@@ -12,7 +12,10 @@ use app\miniprogram\Api as MiniApi;
 class Login extends BaseController
 {
     // 重置中间件
-    protected function _middleware() {}
+    protected function _middleware() 
+    {
+        return [];
+    }
 
     /**
      * 小程序用户登录

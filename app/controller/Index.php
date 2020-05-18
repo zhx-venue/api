@@ -23,7 +23,10 @@ use shophy\campus\models\GetOrgAdminsRequest;
 class Index extends BaseController
 {
     // 重置中间件
-    protected function _middleware() {}
+    protected function _middleware() 
+    {
+        return [];
+    }
 
     public function index()
     {

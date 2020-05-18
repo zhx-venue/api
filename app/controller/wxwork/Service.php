@@ -15,7 +15,10 @@ use shophy\wxwork\structs\SetSessionInfoReq;
 class Service extends BaseController
 {
     // 重置中间件
-    protected function _middleware() {}
+    protected function _middleware() 
+    {
+        return [];
+    }
 
     /**
      * 安装酷柠教育应用

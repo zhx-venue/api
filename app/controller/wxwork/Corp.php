@@ -16,7 +16,10 @@ use app\helper\StringHelper;
 class Corp extends BaseController
 {
     // 重置中间件
-    protected function _middleware() {}
+    protected function _middleware() 
+    {
+        return [];
+    }
     
     // 应用 数据回调 事件处理入口
     public function handle()

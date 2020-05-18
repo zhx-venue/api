@@ -12,7 +12,10 @@ use app\wxwork\ServiceProvider;
 class Provider extends BaseController
 {
     // 重置中间件
-    protected function _middleware() {}
+    protected function _middleware() 
+    {
+        return [];
+    }
 
     /**
      * 单点登录 获取登录用户信息
