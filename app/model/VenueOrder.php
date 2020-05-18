@@ -11,9 +11,6 @@ use app\helper\XDeode;
  */
 class VenueOrder extends BaseModel
 {
-    // 限制预约的最低信用分，低于该值不可以预约
-    const LIMIT_CREDITSCORE = 90;
-
     const PROCESS_CANCEL = -1; // 已取消
     const PROCESS_CHECKING = 0; // 待审核
     const PROCESS_SIGNING = 1; // 待签到
@@ -83,7 +80,7 @@ class VenueOrder extends BaseModel
         if ($orderTime & $orderedTime)  throw new \Exception('该时间段已经被预约了');
 
         // 检查访客信用分
-        if (self::calculateCreditScore(app()->user->id) < self::LIMIT_CREDITSCORE)  throw new \Exception('您信用分低于可以预约限制(低于'.self::LIMIT_CREDITSCORE.'无法预约)');
+        if (self::calculateCreditScore(app()->user->id) < config('app.limit_creditscore'))  throw new \Exception('您信用分低于可以预约限制(低于'.self::LIMIT_CREDITSCORE.'无法预约)');
 
         // 添加预约记录
         $orderInfo = self::create([
