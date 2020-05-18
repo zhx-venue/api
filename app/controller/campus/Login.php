@@ -18,12 +18,10 @@ use shophy\campus\models\GetAccessTokenByCodeRequest;
 
 class Login extends BaseController
 {
-    // 初始化
-    protected function initialize()
+    // 重置中间件
+    protected function _middleware() 
     {
-        parent::initialize();
-
-        $this->middleware = [];
+        return [];
     }
 
     public function index()

@@ -14,14 +14,12 @@ class Upload extends BaseController
     const EXT_IMAGE = 'png,jpg,jpeg,bmp,gif';
     const EXT_REGULAR = 'xls,xlsx,doc,dot,docx,ppt,pptx,pot,pdf,csv,txt,zip,rar';
 
-    // 初始化
-    protected function initialize()
+    // 重置中间件
+    protected function _middleware() 
     {
-        parent::initialize();
-
-        // 默认控制器
-        // 此控制器主要包含测试接口，无需调用相关中间件
-        $this->middleware = [];
+        $middleware = parent::_middleware();
+        $middleware[\app\middleware\Authorization::class] = ['except' => ['index']];
+        return $middleware;
     }
 
     public function index()

@@ -31,4 +31,7 @@ return [
     'error_message'    => '页面错误！请稍后再试～',
     // 显示错误信息
     'show_error_msg'   => env('app.error_msg', false),
+
+    // 限制预约的最低信用分，低于该值不可以预约
+    'limit_creditscore' => env('app.limit_creditscore', 90)
 ];

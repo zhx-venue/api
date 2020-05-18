@@ -62,11 +62,16 @@ abstract class BaseController
         trace('$_POST:'.json_encode($this->request->post()), 'info');
         trace('$_SERVER:'.json_encode($this->request->server()), 'info');
 
-        $this->middleware = [
+        $this->middleware = $this->_middleware();
+    }
+
+    protected function _middleware()
+    {
+        return [
             // 接口鉴权
-            \app\middleware\Authorization::class,
+            \app\middleware\Authorization::class => [],
             // 权限验证
-            \app\middleware\CheckAccess::class
+            \app\middleware\CheckAccess::class => []
         ];
     }
 

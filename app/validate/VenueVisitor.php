@@ -18,6 +18,7 @@ class VenueVisitor extends Validate
         'name' => ['require', 'max' => 32],
         'mobile' => ['mobile'], 
         'id_number' => ['idCard'], 
+        'appid' => ['require', 'max' => 24],
         'openid' => ['require', 'max' => 128]
     ];
     
@@ -31,21 +32,23 @@ class VenueVisitor extends Validate
         'id.require'    => '记录id必须',
         'id.regex'      => 'id必须大于0的整数',
         'name.require'  => '姓名必须',
-        'name.max'      => '姓名最多不能超过25个字符',
+        'name.max'      => '姓名最多不能超过32个字符',
+        'appid.require'  => 'appid必须',
         'openid.require'  => 'openid必须',
     ];
 
     // edit 验证场景定义
     public function sceneAdd()
     {
-        return $this->only(['name', 'mobile', 'id_number', 'openid']);
+        return $this->only(['name', 'mobile', 'id_number', 'appid', 'openid']);
     }
 
     // update 验证场景定义
     public function sceneUpdate()
     {
-        return $this->only(['name', 'mobile', 'id_number', 'openid'])
+        return $this->only(['name', 'mobile', 'id_number', 'appid', 'openid'])
             ->remove('name', 'require')
+            ->remove('appid', 'require')
             ->remove('openid', 'require');
     }
 }

@@ -11,12 +11,10 @@ use app\wxwork\ServiceProvider;
  */
 class Provider extends BaseController
 {
-    // 初始化
-    protected function initialize()
+    // 重置中间件
+    protected function _middleware() 
     {
-        parent::initialize();
-
-        $this->middleware = [];
+        return [];
     }
 
     /**

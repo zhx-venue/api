@@ -15,12 +15,10 @@ use app\helper\StringHelper;
 
 class Corp extends BaseController
 {
-    // 初始化
-    protected function initialize()
+    // 重置中间件
+    protected function _middleware() 
     {
-        parent::initialize();
-
-        $this->middleware = [];
+        return [];
     }
     
     // 应用 数据回调 事件处理入口
@@ -69,6 +67,9 @@ class Corp extends BaseController
         }
     }
 
+    /**
+     * 企业微信jsskd签名
+     */
     public function get_jsapi_sign()
     {
         $url = input('get.url');

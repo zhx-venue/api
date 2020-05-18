@@ -154,6 +154,7 @@ class Venue extends BaseModel
 
                 $findObject->open_time = $venueInfo->open_time;
                 $findObject->max_continuous = $venueInfo->max_continuous;
+                $findObject->limit_ordertime = $_facility['limit_ordertime'] ?? $venueInfo->limit_ordertime;
 
                 $findObject->title = $_facility['title'];
                 if (isset($_facility['bopen'])) {
@@ -168,9 +169,6 @@ class Venue extends BaseModel
                         $findObject->open_time = $opentime;
                         $findObject->max_continuous = $this->calculateMaxtime($opentime);
                     }
-                }
-                if (isset($_facility['limit_ordertime'])) {
-                    $findObject->limit_ordertime = $_facility['limit_ordertime'];
                 }
             }
         }

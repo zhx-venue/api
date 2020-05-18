@@ -11,12 +11,10 @@ use app\miniprogram\Api as MiniApi;
 
 class Login extends BaseController
 {
-    // 初始化
-    protected function initialize()
+    // 重置中间件
+    protected function _middleware() 
     {
-        parent::initialize();
-
-        $this->middleware = [];
+        return [];
     }
 
     /**
@@ -25,7 +23,7 @@ class Login extends BaseController
     public function token($code)
     {
         try {
-            $api = new MiniApi();
+            $api = new MiniApi(input('get.appid'));
             $api->getSessionByCode($code);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());
@@ -57,6 +55,9 @@ class Login extends BaseController
         return $this->jsonOk($userToken);
     }
 
+    /**
+     * 小程序解密数据
+     */
     public function decryptData()
 	{
         $iv = input('post.iv', '', 'strval');
@@ -68,7 +69,7 @@ class Login extends BaseController
 
 		$data = null;
 		try {
-            $api = new MiniApi();
+            $api = new MiniApi(input('post.appid'));
             $api->decryptData($encryptedData, $iv, $openid, $data);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());

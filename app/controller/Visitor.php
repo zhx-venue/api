@@ -15,6 +15,14 @@ class Visitor extends BaseController
 {
     public $modelClass = 'app\model\VenueVisitor';
 
+    // 重置中间件
+    protected function _middleware() 
+    {
+        $middleware = parent::_middleware();
+        $middleware[\app\middleware\Authorization::class] = ['except' => ['index', 'read']];
+        return $middleware;
+    }
+
     /**
      * 显示资源列表
      *

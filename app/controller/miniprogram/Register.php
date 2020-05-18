@@ -11,12 +11,10 @@ use think\exception\ValidateException;
 
 class register extends BaseController
 {
-    // 初始化
-    protected function initialize()
+    // 重置中间件
+    protected function _middleware() 
     {
-        parent::initialize();
-
-        $this->middleware = [];
+        return [];
     }
 
     /**
@@ -25,6 +23,12 @@ class register extends BaseController
     public function index()
     {
         $data = input('post.');
+        isset($data['appid']) || $data['appid'] = config('miniprogram.appid') ?? '';
+        if (empty($data['appid']))  return $this->jsonErr('appid不能为空');
+
+        $dstAppid = env($data['appid'].'_APPID', config('miniprogram.appid'));
+        if ($data['appid'] != $dstAppid)    return $this->jsonErr('无效的appid');
+
         try {
             validate(VVenueVisitor::class)->scene('add')->batch(true)->check($data);
 
