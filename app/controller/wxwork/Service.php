@@ -14,13 +14,8 @@ use shophy\wxwork\structs\SetSessionInfoReq;
 
 class Service extends BaseController
 {
-    // 初始化
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->middleware = [];
-    }
+    // 重置中间件
+    protected function _middleware() {}
 
     /**
      * 安装酷柠教育应用

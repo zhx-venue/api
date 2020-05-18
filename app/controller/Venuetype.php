@@ -12,6 +12,14 @@ use app\model\VenueRole;
 
 class Venuetype extends BaseController
 {
+    // 重置中间件
+    protected function _middleware() 
+    {
+        $middleware = parent::_middleware();
+        $middleware[\app\middleware\Authorization::class] = ['except' => ['index']];
+        return $middleware;
+    }
+
     /**
      * 显示资源列表
      *

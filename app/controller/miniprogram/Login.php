@@ -11,13 +11,8 @@ use app\miniprogram\Api as MiniApi;
 
 class Login extends BaseController
 {
-    // 初始化
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->middleware = [];
-    }
+    // 重置中间件
+    protected function _middleware() {}
 
     /**
      * 小程序用户登录
@@ -57,6 +52,9 @@ class Login extends BaseController
         return $this->jsonOk($userToken);
     }
 
+    /**
+     * 小程序解密数据
+     */
     public function decryptData()
 	{
         $iv = input('post.iv', '', 'strval');

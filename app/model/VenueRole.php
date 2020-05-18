@@ -270,7 +270,12 @@ class VenueRole extends BaseModel
     public static function getGuestAuth()
     {
         $auths = ['pos' => 0, 'module' => []];
-        $modules = [];
+        $modules = [
+            self::MD_SCHOOL => [0],
+            self::MD_VENUE => [0],
+            self::MD_VISITOR => [0],
+            self::MD_VENUETYPE => [0],
+        ];
         foreach ($modules as $module => $positions) {
             foreach ($positions as $position) {
                 $auths['module'][$module] = ($auths['module'][$module] ?? 0) | (1<<$position);

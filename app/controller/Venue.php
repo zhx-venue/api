@@ -14,6 +14,14 @@ class Venue extends BaseController
     public $modelClass = 'app\model\Venue';
     public $validateClass = 'app\validate\Venue';
 
+    // 重置中间件
+    protected function _middleware() 
+    {
+        $middleware = parent::_middleware();
+        $middleware[\app\middleware\Authorization::class] = ['except' => ['index', 'read']];
+        return $middleware;
+    }
+
     /**
      * 显示资源列表
      *

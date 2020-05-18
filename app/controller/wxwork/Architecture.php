@@ -11,11 +11,15 @@ class Architecture extends BaseController
 {
     public function getDeparts()
     {
+        if (!checkAuth(VenueRole::MD_MEMBER, 1))   return $this->jsonErr('无权限进行该操作');
+        
         return json(Contacts::listDepartments());
     }
 
     public function getAll()
     {
+        if (!checkAuth(VenueRole::MD_MEMBER, 1))   return $this->jsonErr('无权限进行该操作');
+
         $members = [];
         $departs = [];
         Contacts::getArchitecture(app()->user->corpid, $departs, $members);

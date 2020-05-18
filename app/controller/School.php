@@ -11,6 +11,14 @@ class School extends BaseController
 {
     public $modelClass = 'app\model\VenueSchool';
 
+    // 重置中间件
+    protected function _middleware() 
+    {
+        $middleware = parent::_middleware();
+        $middleware[\app\middleware\Authorization::class] = ['only' => ['set_config']];
+        return $middleware;
+    }
+
     /**
      * 显示资源列表
      *

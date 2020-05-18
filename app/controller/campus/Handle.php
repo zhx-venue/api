@@ -8,13 +8,8 @@ use app\campus\DealChange;
 
 class Handle extends BaseController
 {
-    // 初始化
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->middleware = [];
-    }
+    // 重置中间件
+    protected function _middleware() {}
 
     public function response()
     {

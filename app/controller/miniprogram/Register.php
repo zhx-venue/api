@@ -11,13 +11,8 @@ use think\exception\ValidateException;
 
 class register extends BaseController
 {
-    // 初始化
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->middleware = [];
-    }
+    // 重置中间件
+    protected function _middleware() {}
 
     /**
      * 小程序访客注册

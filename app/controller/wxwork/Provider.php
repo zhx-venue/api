@@ -11,13 +11,8 @@ use app\wxwork\ServiceProvider;
  */
 class Provider extends BaseController
 {
-    // 初始化
-    protected function initialize()
-    {
-        parent::initialize();
-
-        $this->middleware = [];
-    }
+    // 重置中间件
+    protected function _middleware() {}
 
     /**
      * 单点登录 获取登录用户信息

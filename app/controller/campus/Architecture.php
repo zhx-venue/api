@@ -6,11 +6,14 @@ namespace app\controller\campus;
 use app\BaseController;
 use app\campus\Contacts;
 use app\helper\Tree;
+use app\model\VenueRole;
 
 class Architecture extends BaseController
 {
     public function all()
     {
+        if (!checkAuth(VenueRole::MD_MEMBER, 1))   return $this->jsonErr('无权限进行该操作');
+
         $departType = input('get.departmentType', 2, 'intval');
         $architecture = [];
 
@@ -25,6 +28,8 @@ class Architecture extends BaseController
 
     public function departments()
     {
+        if (!checkAuth(VenueRole::MD_MEMBER, 1))   return $this->jsonErr('无权限进行该操作');
+
         $daparts = [];
         $departType = input('get.departmentType', null, 'intval');
 
@@ -39,6 +44,8 @@ class Architecture extends BaseController
 
     public function departmentUsers()
     {
+        if (!checkAuth(VenueRole::MD_MEMBER, 1))   return $this->jsonErr('无权限进行该操作');
+        
         $users = [];
         $departmentId = input('get.departmentId', 0, 'intval');
 

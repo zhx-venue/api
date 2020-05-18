@@ -22,15 +22,8 @@ use shophy\campus\models\GetOrgAdminsRequest;
 
 class Index extends BaseController
 {
-    // 初始化
-    protected function initialize()
-    {
-        parent::initialize();
-
-        // 默认控制器
-        // 此控制器主要包含测试接口，无需调用相关中间件
-        $this->middleware = [];
-    }
+    // 重置中间件
+    protected function _middleware() {}
 
     public function index()
     {
