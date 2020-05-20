@@ -80,7 +80,7 @@ class Visitor extends BaseController
             VenueVisitorBan::create([
                 'school_id' => app()->user->schoolid,
                 'visitor_id' => $id,
-                'status' => 0
+                'status' => VenueVisitorBan::BAN
             ]);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());
@@ -103,7 +103,7 @@ class Visitor extends BaseController
             VenueVisitorBan::create([
                 'school_id' => app()->user->schoolid,
                 'visitor_id' => $id,
-                'status' => 1
+                'status' => VenueVisitorBan::NORMAL
             ]);
         } catch (\Exception $e) {
             return $this->jsonErr($e->getMessage());
