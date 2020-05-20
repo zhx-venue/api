@@ -10,4 +10,6 @@ use app\BaseModel;
  */
 class VenueVisitorBan extends BaseModel
 {
+    const BAN = 0;
+    const NORMAL = 1;
 }
