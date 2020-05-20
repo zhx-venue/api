@@ -131,7 +131,7 @@ class BaseModel extends Model
                     break;
                 }
                 default: {
-                    if (stripos($key, 'filter_') === 0) {
+                    if ($value != '' && stripos($key, 'filter_') === 0) {
                         $key = substr($key, 7);
                         $where = $this->formatFilter($key, $value);
                         if ($where) {

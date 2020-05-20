@@ -87,7 +87,7 @@ class VenueVisitor extends BaseModel
      */
     public function getOrderCounts()
     {
-        return VenueOrder::where(['visitor_id' => $this->id, 'status' => self::STATUS_NORMAL])->where('process', 'not in', [VenueOrder::PROCESS_CANCEL, VenueOrder::PROCESS_REVOKED])->count();
+        return VenueOrder::where(['visitor_id' => $this->id, 'status' => self::STATUS_NORMAL])->where('process', 'not in', [VenueOrder::PROCESS_CANCEL, VenueOrder::PROCESS_REFUSED])->count();
     }
 
     /**
