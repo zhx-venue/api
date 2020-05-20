@@ -15,7 +15,7 @@ class School extends BaseController
     protected function _middleware() 
     {
         $middleware = parent::_middleware();
-        $middleware[\app\middleware\Authorization::class] = ['only' => ['set_config']];
+        \think\facade\Request::header('authorization') || $middleware[\app\middleware\Authorization::class] = ['only' => ['set_config']];
         return $middleware;
     }
 

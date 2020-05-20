@@ -141,7 +141,7 @@ class VenueOrder extends BaseModel
                         }
                         case self::PROCESS_REFUSED:
                         case self::PROCESS_SIGNING: {
-                            $operateType = $data['process'] == self::PROCESS_REFUSED ? VenueOrderHistory::OPTYPE_REFUSED : VenueOrderHistory::OPTYPE_SIGNING;
+                            $operateType = $data['process'] == self::PROCESS_REFUSED ? VenueOrderHistory::OPTYPE_REFUSED : VenueOrderHistory::OPTYPE_CHECKING;
                             // 只有管理员有审核和拒绝权限
                             if (! (isset($userAuths) && $userAuths['pos'] & 1)) {
                                 throw new \Exception('仅允许学校管理员审核');

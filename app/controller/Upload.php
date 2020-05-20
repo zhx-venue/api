@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace app\controller;
 
-use think\Request;
+use think\facade\Request;
 use app\BaseController;
 use app\model\VenueFile;
 use think\exception\ValidateException;
@@ -18,7 +18,7 @@ class Upload extends BaseController
     protected function _middleware() 
     {
         $middleware = parent::_middleware();
-        $middleware[\app\middleware\Authorization::class] = ['except' => ['index']];
+        \think\facade\Request::header('authorization') || $middleware[\app\middleware\Authorization::class] = ['except' => ['index']];
         return $middleware;
     }
 

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace app\controller;
 
-use think\Request;
+use think\facade\Request;
 use app\BaseController;
 use app\model\User;
 use app\model\VenueRole;
@@ -19,7 +19,7 @@ class Visitor extends BaseController
     protected function _middleware() 
     {
         $middleware = parent::_middleware();
-        $middleware[\app\middleware\Authorization::class] = ['except' => ['index', 'read']];
+        \think\facade\Request::header('authorization') || $middleware[\app\middleware\Authorization::class] = ['except' => ['index', 'read']];
         return $middleware;
     }
 

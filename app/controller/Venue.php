@@ -18,7 +18,7 @@ class Venue extends BaseController
     protected function _middleware() 
     {
         $middleware = parent::_middleware();
-        $middleware[\app\middleware\Authorization::class] = ['except' => ['index', 'read']];
+        \think\facade\Request::header('authorization') || $middleware[\app\middleware\Authorization::class] = ['except' => ['index', 'read']];
         return $middleware;
     }
 
