@@ -54,8 +54,8 @@ class VenueOrder extends BaseModel
         if (empty($venueFacility)) throw new \Exception('无效的场地设备');
 
         // 是否被学校禁止预约
-        $isBan = VenueVisitorBan::where(['school_id' => $venueFacility->school_id, 'visitor_id' => app()->user->id, 'status' => VenueVisitorBan::BAN])->find();
-        if ($isBan) throw new \Exception('禁止预约该学校场地');
+        $banInfo = VenueVisitorBan::where(['school_id' => $venueFacility->school_id, 'visitor_id' => app()->user->id])->order('created_at', 'desc')->find();
+        if ($banInfo && $banInfo->status == VenueVisitorBan::BAN)   throw new \Exception('禁止预约该学校场地');
 
         // 检查场地是否开放
         if (intval($venueFacility->option) & 1)    throw new \Exception('该场地已关闭');
